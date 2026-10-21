@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simple CRUD App</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 15px;
+      background: #f4f4f4;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+    }
+
+    input { width: 95%; }
+
+    button { cursor: pointer; }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      background: white;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Simple CRUD Application</h2>
+
+  <form id="userForm">
+    <input id="name" placeholder="Name" required>
+    <input id="email" type="email" placeholder="Email" required>
+
+    <button type="submit">Save User</button>
+    <button type="button" onclick="resetForm()">Clear</button>
+  </form>
+
+  <p id="message"></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="users"></tbody>
+  </table>
+
+  <script>
+    const API = "https://script.google.com/macros/s/AKfycbyZc_2ErV9fptRjma42705P-1TpbCH1dZ2WzcT1qZREEtjNIEMDWFDxwKdpSOh5JQ7A/exec";
+    let editingId = null;
+
+    async function loadUsers() {
+      try {
+        const res = await fetch(API);
+        const users = await res.json();
+        const tbody = document.getElementById("users");
+
+        tbody.replaceChildren();
+
+        users.forEach(user => {
+          const tr = document.createElement("tr");
+
+          [user.name, user.email].forEach(value => {
+            const td = document.createElement("td");
+            td.textContent = value;
+            tr.appendChild(td);
+          });
+
+          const actions = document.createElement("td");
+
+          const edit = document.createElement("button");
+          edit.textContent = "Edit";
+          edit.onclick = () => {
+            editingId = user.id;
+            document.getElementById("name").value = user.name;
+            document.getElementById("email").value = user.email;
+          };
+
+          const del = document.createElement("button");
+          del.textContent = "Delete";
+          del.onclick = () => deleteUser(user.id);
+
+          actions.append(edit, del);
+          tr.appendChild(actions);
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById("message").textContent =
+          "Users loaded: " + users.length;
+      } catch (error) {
+        document.getElementById("message").textContent =
+          "Unable to load users.";
+      }
+    }
+
+    async function saveUser(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+
+      if (!name || !email) return;
+
+      const payload = {
+        action: editingId ? "update" : "create",
+        id: editingId,
+        name,
+        email
+      };
+
+      try {
+        await fetch(API, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        resetForm();
+        document.getElementById("message").textContent = "Request sent.";
+        await loadUsers();
+      } catch (error) {
+        document.getElementById("message").textContent =
+          "Request failed.";
+      }
+    }
+
+    async function deleteUser(id) {
+      if (!confirm("Delete this user?")) return;
+
+      try {
+        await fetch(API, {
+          method: "POST",
+          body: JSON.stringify({ action: "delete", id })
+        });
+
+        await loadUsers();
+      } catch (error) {
+        document.getElementById("message").textContent =
+          "Delete failed.";
+      }
+    }
+
+    function resetForm() {
+      editingId = null;
+      document.getElementById("userForm").reset();
+    }
+
+    document.getElementById("userForm")
+      .addEventListener("submit", saveUser);
+
+    loadUsers();
+  </script>
+</body>
+</html>
