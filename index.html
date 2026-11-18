@@ -1,170 +1,491 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Simple CRUD App</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 15px;
-      background: #f4f4f4;
-    }
-
-    input, button {
-      padding: 10px;
-      margin: 5px 0;
-    }
-
-    input { width: 95%; }
-
-    button { cursor: pointer; }
-
-    table {
-      width: 100%;
-      margin-top: 20px;
-      background: white;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI/ML Engineer | Learning Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#080e16;--panel:#101b27;--panel2:#152333;
+  --green:#36e69a;--blue:#54a7ff;--white:#f4f8fc;
+  --muted:#91a5b8;--border:#243648;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:radial-gradient(ellipse at 80% 0%,#103329 0%,transparent 35%),var(--bg);
+ color:var(--white);font-family:Inter,system-ui,Arial,sans-serif;
+ min-height:100vh;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+a{color:var(--blue);text-decoration:none}
+a:hover{color:var(--green)}
+.auth{
+ min-height:100vh;display:grid;place-items:center;padding:20px;
+}
+.auth-card{
+ width:min(440px,100%);padding:32px;border:1px solid var(--border);
+ border-radius:24px;background:linear-gradient(145deg,#142435,#0d1722);
+ box-shadow:0 25px 80px #0009;animation:rise .6s ease;
+}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.logo-icon{
+ width:48px;height:48px;display:grid;place-items:center;
+ background:#123b30;color:var(--green);border-radius:15px;font-size:25px;
+}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:30px;letter-spacing:-1px}
+.muted{color:var(--muted)}
+.field{margin:15px 0}
+label{display:block;color:#b8c8d8;font-size:13px;margin-bottom:8px}
+input{
+ width:100%;padding:14px;color:white;background:#09131e;
+ border:1px solid var(--border);border-radius:11px;outline:none;
+}
+input:focus{border-color:var(--green);box-shadow:0 0 0 3px #36e69a20}
+.btn{
+ border:0;border-radius:11px;padding:13px 18px;font-weight:750;
+ transition:.25s;cursor:pointer;
+}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.primary{background:linear-gradient(100deg,var(--green),#9affce);color:#062016}
+.secondary{background:#1b3043;color:white;border:1px solid var(--border)}
+.full{width:100%}
+.switch{text-align:center;font-size:13px;margin-top:20px}
+.switch button{background:none;border:0;color:var(--green)}
+.app{display:flex;min-height:100vh}
+.sidebar{
+ width:245px;background:#0b1520;border-right:1px solid var(--border);
+ padding:25px 17px;position:fixed;inset:0 auto 0 0;z-index:5;
+ display:flex;flex-direction:column;
+}
+.brand{font-weight:900;letter-spacing:1px;margin:5px 8px 36px}
+.brand span{color:var(--green)}
+.nav{display:grid;gap:9px}
+.nav button{
+ padding:13px 15px;border:0;border-radius:11px;text-align:left;
+ color:var(--muted);background:transparent;font-weight:650;
+}
+.nav button.active,.nav button:hover{background:#183329;color:var(--green)}
+.side-bottom{margin-top:auto}
+.main{margin-left:245px;width:calc(100% - 245px);padding:28px 35px 60px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:30px}
+.user{display:flex;align-items:center;gap:10px}
+.avatar{
+ width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+ color:#062016;background:var(--green);font-weight:900;
+}
+.hero{
+ padding:30px;border:1px solid #28513e;border-radius:23px;
+ background:linear-gradient(120deg,#102d25,#14283b 75%);
+ box-shadow:0 18px 45px #0005;margin-bottom:22px;
+}
+.hero h1{font-size:clamp(25px,4vw,39px);margin-bottom:10px}
+.hero h1 span{color:var(--green)}
+.hero p{color:#b0c3d1;max-width:650px;line-height:1.7}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}
+.card{
+ background:linear-gradient(145deg,#142333,#0e1925);
+ border:1px solid var(--border);border-radius:17px;padding:20px;
+ box-shadow:0 10px 25px #0002;transition:.25s;
+}
+.card:hover{transform:translateY(-4px);border-color:#36785a}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat-value{font-size:29px;font-weight:850;margin-top:8px}
+.green{color:var(--green)}.blue{color:var(--blue)}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:30px 0 15px}
+.section-head h2{margin:0;font-size:21px}
+.progress-track{height:9px;border-radius:20px;background:#253544;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:20px;transition:width .5s}
+.week-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.week-card{background:linear-gradient(145deg,#142333,#0e1925);border:1px solid var(--border);border-radius:18px;padding:20px;transition:.25s}
+.week-card:hover{border-color:var(--green);transform:translateY(-3px)}
+.week-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tag{font-size:10px;letter-spacing:1px;color:var(--green);background:#14382b;padding:7px 10px;border-radius:20px}
+.week-card h3{margin:15px 0 8px}
+.week-card p{font-size:13px;color:var(--muted);line-height:1.5}
+.week-card .progress-track{margin:15px 0 8px}
+.week-card small{color:var(--muted)}
+.open-week{margin-top:14px}
+.topic-list{display:grid;gap:11px;margin:20px 0}
+.topic{
+ display:flex;align-items:flex-start;gap:12px;background:#101e2c;
+ border:1px solid var(--border);padding:14px;border-radius:12px;
+}
+.topic input[type=checkbox]{
+ accent-color:var(--green);width:19px;height:19px;margin:1px 0 0;
+ flex-shrink:0;
+}
+.topic label{margin:0;cursor:pointer;line-height:1.5}
+.topic.done{border-color:#286044;background:#10271f}
+.topic.done label{text-decoration:line-through;color:#7d9b8b}
+.resource{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ background:#102130;padding:13px 15px;border-radius:11px;margin:9px 0;
+ border:1px solid var(--border);font-size:13px;
+}
+.resource a{font-weight:700}
+.view{animation:rise .35s ease}
+.empty{padding:35px;text-align:center;color:var(--muted)}
+.notice{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6}
+@keyframes rise{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){
+ .sidebar{width:72px;padding:18px 8px}
+ .brand{font-size:0;text-align:center;margin:8px 0 28px}
+ .brand span{font-size:18px}
+ .nav button{font-size:0;text-align:center;padding:14px 5px}
+ .nav button::first-letter{font-size:17px}
+ .main{margin-left:72px;width:calc(100% - 72px);padding:22px}
+ .stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+ .main{padding:16px 12px}
+ .week-grid{grid-template-columns:1fr}
+ .stats{gap:9px}
+ .card{padding:14px}
+ .stat-value{font-size:23px}
+ .hero{padding:22px}
+ .topbar{align-items:flex-start}
+}
+</style>
 </head>
-
 <body>
-  <h2>Simple CRUD Application</h2>
 
-  <form id="userForm">
-    <input id="name" placeholder="Name" required>
-    <input id="email" type="email" placeholder="Email" required>
+<!-- AUTHENTICATION -->
+<section id="authScreen" class="auth">
+ <div class="auth-card">
+  <div class="logo">
+   <div class="logo-icon">✦</div>
+   <div><b>AI/ML TRACKER</b><div class="muted" style="font-size:11px">LEARN • BUILD • DEPLOY</div></div>
+  </div>
+  <div id="loginBox">
+   <h1>Welcome <span class="green">back.</span></h1>
+   <p class="muted">Continue your AI engineering journey.</p>
+   <form id="loginForm">
+    <div class="field"><label>Email address</label><input id="loginEmail" type="email" required autocomplete="email"></div>
+    <div class="field"><label>Password</label><input id="loginPassword" type="password" required autocomplete="current-password"></div>
+    <button class="btn primary full" type="submit">Login →</button>
+   </form>
+   <div class="switch">New learner? <button id="showRegister">Create account</button></div>
+  </div>
+  <div id="registerBox" class="hidden">
+   <h1>Create your <span class="green">account.</span></h1>
+   <p class="muted">Start tracking your learning progress.</p>
+   <form id="registerForm">
+    <div class="field"><label>Full name</label><input id="regName" required maxlength="80" autocomplete="name"></div>
+    <div class="field"><label>Email address</label><input id="regEmail" type="email" required autocomplete="email"></div>
+    <div class="field"><label>Password (minimum 8 characters)</label><input id="regPassword" type="password" minlength="8" required autocomplete="new-password"></div>
+    <button class="btn primary full" type="submit">Create account →</button>
+   </form>
+   <div class="switch">Already registered? <button id="showLogin">Login</button></div>
+  </div>
+  <p id="authMessage" class="notice" aria-live="polite"></p>
+ </div>
+</section>
 
-    <button type="submit">Save User</button>
-    <button type="button" onclick="resetForm()">Clear</button>
-  </form>
+<!-- MAIN APP -->
+<div id="app" class="app hidden">
+ <aside class="sidebar">
+  <div class="brand">AI<span>TRACK.</span></div>
+  <nav class="nav">
+   <button class="active" data-page="dashboard">◈ &nbsp; Dashboard</button>
+   <button data-page="roadmap">▤ &nbsp; Learning Roadmap</button>
+   <button data-page="analytics">▥ &nbsp; My Analytics</button>
+   <button data-page="resources">↗ &nbsp; Resources</button>
+  </nav>
+  <div class="side-bottom">
+   <button id="logoutBtn" class="btn secondary full">↪ Logout</button>
+   <p class="notice">AI/ML ENGINEER<br>90-DAY CHALLENGE</p>
+  </div>
+ </aside>
 
-  <p id="message"></p>
+ <main class="main">
+  <header class="topbar">
+   <div><div class="muted" style="font-size:12px">YOUR PERSONAL WORKSPACE</div><b id="today"></b></div>
+   <div class="user"><div><b id="userName">Learner</b><div class="muted" style="font-size:11px">AI/ML Engineer</div></div><div class="avatar" id="avatar">A</div></div>
+  </header>
+  <div id="pageContent" class="view"></div>
+ </main>
+</div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="users"></tbody>
-  </table>
+<script>
+/* 1. CONFIGURATION: Replace with your Supabase project values */
+const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
 
-  <script>
-    const API = "https://script.google.com/macros/s/AKfycbyZc_2ErV9fptRjma42705P-1TpbCH1dZ2WzcT1qZREEtjNIEMDWFDxwKdpSOh5JQ7A/exec";
-    let editingId = null;
+/* 2. CLIENT */
+const configured = SUPABASE_URL.startsWith("https://") &&
+                   !SUPABASE_ANON_KEY.includes("YOUR_");
+const db = configured
+ ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)
+ : null;
 
-    async function loadUsers() {
-      try {
-        const res = await fetch(API);
-        const users = await res.json();
-        const tbody = document.getElementById("users");
+let curriculum=[];
+let currentUser=null;
+let completed={};
+let studyHours=0;
+let activePage="dashboard";
+let activeWeek=null;
 
-        tbody.replaceChildren();
+const $=id=>document.getElementById(id);
+const safe=(s)=>String(s??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+const allTopics=()=>curriculum.flatMap(w=>w.topics.map(t=>t.id));
+const totalTopics=()=>allTopics().length;
+const doneCount=()=>allTopics().filter(id=>completed[id]).length;
+const percent=()=>totalTopics()?Math.round(doneCount()/totalTopics()*100):0;
+const weekCount=w=>w.topics.filter(t=>completed[t.id]).length;
+const weekPercent=w=>w.topics.length?Math.round(weekCount(w)/w.topics.length*100):0;
 
-        users.forEach(user => {
-          const tr = document.createElement("tr");
+function message(text,error=false){
+ $("authMessage").textContent=text;
+ $("authMessage").style.color=error?"#ff8585":"#36e69a";
+}
+function toggleAuth(register){
+ $("loginBox").classList.toggle("hidden",register);
+ $("registerBox").classList.toggle("hidden",!register);
+ message("");
+}
+$("showRegister").onclick=()=>toggleAuth(true);
+$("showLogin").onclick=()=>toggleAuth(false);
 
-          [user.name, user.email].forEach(value => {
-            const td = document.createElement("td");
-            td.textContent = value;
-            tr.appendChild(td);
-          });
+async function loadCurriculum(){
+ const response=await fetch("./curriculum.json");
+ if(!response.ok)throw new Error("Could not load curriculum.json");
+ const data=await response.json();
+ curriculum=data.weeks;
+}
 
-          const actions = document.createElement("td");
+async function loadProgress(){
+ const {data,error}=await db.from("user_progress")
+  .select("completed_tasks,study_hours")
+  .eq("user_id",currentUser.id).maybeSingle();
+ if(error)throw error;
+ completed=data?.completed_tasks||{};
+ studyHours=Number(data?.study_hours||0);
+}
 
-          const edit = document.createElement("button");
-          edit.textContent = "Edit";
-          edit.onclick = () => {
-            editingId = user.id;
-            document.getElementById("name").value = user.name;
-            document.getElementById("email").value = user.email;
-          };
+async function saveProgress(){
+ const {error}=await db.from("user_progress").upsert({
+  user_id:currentUser.id,
+  completed_tasks:completed,
+  study_hours:studyHours,
+  updated_at:new Date().toISOString()
+ },{onConflict:"user_id"});
+ if(error){
+  alert("Progress save failed: "+error.message);
+  return false;
+ }
+ return true;
+}
 
-          const del = document.createElement("button");
-          del.textContent = "Delete";
-          del.onclick = () => deleteUser(user.id);
+async function startApp(user){
+ currentUser=user;
+ await loadCurriculum();
+ await loadProgress();
+ $("authScreen").classList.add("hidden");
+ $("app").classList.remove("hidden");
+ const name=user.user_metadata?.full_name||user.email.split("@")[0];
+ $("userName").textContent=name;
+ $("avatar").textContent=name.charAt(0).toUpperCase();
+ $("today").textContent=new Date().toLocaleDateString("en-IN",{dateStyle:"full"});
+ render();
+}
 
-          actions.append(edit, del);
-          tr.appendChild(actions);
-          tbody.appendChild(tr);
-        });
+$("registerForm").onsubmit=async e=>{
+ e.preventDefault();
+ if(!db){message("Please configure Supabase first.",true);return;}
+ const name=$("regName").value.trim();
+ const email=$("regEmail").value.trim();
+ const password=$("regPassword").value;
+ if(password.length<8){message("Use at least 8 characters.",true);return;}
+ const {data,error}=await db.auth.signUp({
+  email,password,options:{data:{full_name:name}}
+ });
+ if(error){message(error.message,true);return;}
+ if(data.session){
+  await startApp(data.user);
+ }else{
+  message("Registration successful. Verify your email, then log in.");
+  toggleAuth(false);
+ }
+};
 
-        document.getElementById("message").textContent =
-          "Users loaded: " + users.length;
-      } catch (error) {
-        document.getElementById("message").textContent =
-          "Unable to load users.";
-      }
-    }
+$("loginForm").onsubmit=async e=>{
+ e.preventDefault();
+ if(!db){message("Please configure Supabase first.",true);return;}
+ const {data,error}=await db.auth.signInWithPassword({
+  email:$("loginEmail").value.trim(),
+  password:$("loginPassword").value
+ });
+ if(error){message(error.message,true);return;}
+ try{await startApp(data.user);}
+ catch(err){message(err.message,true);}
+};
 
-    async function saveUser(event) {
-      event.preventDefault();
+async function logout(){
+ await db.auth.signOut();
+ currentUser=null;completed={};
+ $("app").classList.add("hidden");
+ $("authScreen").classList.remove("hidden");
+ toggleAuth(false);
+}
+$("logoutBtn").onclick=logout;
 
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
+document.querySelectorAll(".nav button").forEach(btn=>{
+ btn.onclick=()=>{
+  activePage=btn.dataset.page;activeWeek=null;
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");render();
+ };
+});
 
-      if (!name || !email) return;
+function dashboard(){
+ return `
+ <section class="hero">
+  <div class="tag">YOUR 90-DAY MISSION</div>
+  <h1>Build your future in <span>Artificial Intelligence.</span></h1>
+  <p>Learn Python, master Machine Learning, build intelligent systems and become an AI/ML Engineer. Every completed topic takes you one step closer.</p>
+  <b>YOUR OVERALL PROGRESS · ${percent()}%</b>
+  <div class="progress-track" style="margin-top:12px"><div class="progress-fill" style="width:${percent()}%"></div></div>
+ </section>
+ <section class="stats">
+  <div class="card"><div class="stat-label">COMPLETED TOPICS</div><div class="stat-value green">${doneCount()}</div></div>
+  <div class="card"><div class="stat-label">REMAINING TOPICS</div><div class="stat-value">${totalTopics()-doneCount()}</div></div>
+  <div class="card"><div class="stat-label">WEEKS COMPLETED</div><div class="stat-value blue">${curriculum.filter(w=>weekPercent(w)===100).length}/12</div></div>
+  <div class="card"><div class="stat-label">STUDY HOURS</div><div class="stat-value green">${studyHours}</div></div>
+ </section>
+ <div class="section-head"><h2>Learning roadmap</h2><span class="muted">12 weeks</span></div>
+ <section class="week-grid">${curriculum.map(w=>weekCard(w)).join("")}</section>`;
+}
 
-      const payload = {
-        action: editingId ? "update" : "create",
-        id: editingId,
-        name,
-        email
-      };
+function weekCard(w){
+ return `<article class="week-card">
+ <div class="week-top"><span class="tag">${safe(w.category)}</span><span class="muted">WEEK ${w.week}</span></div>
+ <h3>${safe(w.title)}</h3><p>${safe(w.description)}</p>
+ <div class="progress-track"><div class="progress-fill" style="width:${weekPercent(w)}%"></div></div>
+ <small>${weekCount(w)}/${w.topics.length} topics · ${weekPercent(w)}% completed</small>
+ <button class="btn secondary full open-week" onclick="openWeek(${w.week})">Explore week →</button>
+ </article>`;
+}
 
-      try {
-        await fetch(API, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
+function openWeek(n){
+ activePage="roadmap";activeWeek=n;
+ document.querySelectorAll(".nav button").forEach(b=>{
+ b.classList.toggle("active",b.dataset.page==="roadmap");
+ });
+ render();
+}
 
-        resetForm();
-        document.getElementById("message").textContent = "Request sent.";
-        await loadUsers();
-      } catch (error) {
-        document.getElementById("message").textContent =
-          "Request failed.";
-      }
-    }
+function roadmap(){
+ if(activeWeek){
+  const w=curriculum.find(x=>x.week===activeWeek);
+  if(!w)return "<p>Week not found.</p>";
+  return `<button class="btn secondary" onclick="activeWeek=null;render()">← All weeks</button>
+   <div class="section-head"><h2>Week ${w.week}: ${safe(w.title)}</h2><span class="green">${weekPercent(w)}%</span></div>
+   <p class="muted">${safe(w.description)}</p>
+   <div class="progress-track"><div class="progress-fill" style="width:${weekPercent(w)}%"></div></div>
+   <h3 style="margin-top:28px">Learning checklist</h3>
+   <div class="topic-list">${w.topics.map(t=>`
+    <div class="topic ${completed[t.id]?"done":""}">
+     <input type="checkbox" id="${safe(t.id)}" ${completed[t.id]?"checked":""}
+      onchange="toggleTopic('${safe(t.id)}',this.checked)">
+     <label for="${safe(t.id)}">${safe(t.name)}</label>
+    </div>`).join("")}</div>
+   <h3>Weekly targets</h3>
+   <div class="card"><ul>${w.targets.map(t=>`<li style="margin:10px 0">${safe(t)}</li>`).join("")}</ul></div>
+   <h3 style="margin-top:25px">Learning resources</h3>
+   ${w.resources.map(r=>`<div class="resource"><span>${safe(r.name)}</span><a href="${safe(r.url)}" target="_blank" rel="noopener noreferrer">Study ↗</a></div>`).join("")}
+   <div class="card" style="margin-top:18px">
+    <b>Record study hours</b>
+    <p class="muted" style="font-size:12px">Add your completed study hours.</p>
+    <form onsubmit="addHours(event)">
+     <input id="hourInput" type="number" min="0.5" max="24" step="0.5" placeholder="Hours studied" required>
+     <button class="btn primary" style="margin-top:10px">Save hours</button>
+    </form>
+   </div>`;
+ }
+ return `<div class="section-head"><h2>12-Week Learning Plan</h2></div>
+ <section class="week-grid">${curriculum.map(w=>weekCard(w)).join("")}</section>`;
+}
 
-    async function deleteUser(id) {
-      if (!confirm("Delete this user?")) return;
+function analytics(){
+ const bars=curriculum.map(w=>`
+ <div style="margin:18px 0">
+  <div class="week-top"><b>Week ${w.week} · ${safe(w.title)}</b><span class="green">${weekPercent(w)}%</span></div>
+  <div class="progress-track" style="margin-top:9px"><div class="progress-fill" style="width:${weekPercent(w)}%"></div></div>
+ </div>`).join("");
+ return `<div class="section-head"><h2>My learning analytics</h2></div>
+ <div class="stats">
+  <div class="card"><div class="stat-label">OVERALL COMPLETION</div><div class="stat-value green">${percent()}%</div></div>
+  <div class="card"><div class="stat-label">TOTAL STUDY HOURS</div><div class="stat-value blue">${studyHours}</div></div>
+  <div class="card"><div class="stat-label">TARGET HOURS</div><div class="stat-value">720</div></div>
+  <div class="card"><div class="stat-label">HOURS COMPLETION</div><div class="stat-value">${Math.min(100,Math.round(studyHours/720*100))}%</div></div>
+ </div>
+ <div class="card"><h3>Weekly performance</h3>${bars}</div>
+ <div class="card" style="margin-top:18px"><h3>Career milestone</h3>
+ <p class="muted">Your target is to complete 8 core learning weeks and 4 portfolio weeks.</p>
+ <div class="progress-track"><div class="progress-fill" style="width:${percent()}%"></div></div>
+ </div>`;
+}
 
-      try {
-        await fetch(API, {
-          method: "POST",
-          body: JSON.stringify({ action: "delete", id })
-        });
+function resources(){
+ const unique=new Map();
+ curriculum.forEach(w=>w.resources.forEach(r=>unique.set(r.url,r)));
+ return `<div class="section-head"><h2>Learning resources</h2></div>
+ <p class="muted">Your curated AI/ML study library.</p>
+ ${[...unique.values()].map(r=>`
+ <div class="resource"><span>📚 ${safe(r.name)}</span>
+ <a href="${safe(r.url)}" target="_blank" rel="noopener noreferrer">Open resource ↗</a></div>`).join("")}`;
+}
 
-        await loadUsers();
-      } catch (error) {
-        document.getElementById("message").textContent =
-          "Delete failed.";
-      }
-    }
+async function toggleTopic(id,value){
+ completed[id]=value;
+ render();
+ await saveProgress();
+}
+async function addHours(e){
+ e.preventDefault();
+ const val=Number($("hourInput").value);
+ if(!Number.isFinite(val)||val<=0||val>24)return;
+ studyHours+=val;
+ const ok=await saveProgress();
+ if(ok)render();
+}
 
-    function resetForm() {
-      editingId = null;
-      document.getElementById("userForm").reset();
-    }
+function render(){
+ const pages={dashboard,roadmap,analytics,resources};
+ $("pageContent").innerHTML=pages[activePage]();
+}
+window.openWeek=openWeek;
+window.toggleTopic=toggleTopic;
+window.addHours=addHours;
 
-    document.getElementById("userForm")
-      .addEventListener("submit", saveUser);
-
-    loadUsers();
-  </script>
+async function init(){
+ if(!db){
+  message("Setup required: add your Supabase URL and publishable key in index.html.",true);
+  return;
+ }
+ try{
+  await loadCurriculum();
+  const {data,error}=await db.auth.getSession();
+  if(error)throw error;
+  if(data.session){
+   await startApp(data.session.user);
+  }
+  db.auth.onAuthStateChange(async(event,session)=>{
+   if(event==="SIGNED_OUT"){
+    $("app").classList.add("hidden");
+    $("authScreen").classList.remove("hidden");
+   }
+  });
+ }catch(e){message(e.message,true);}
+}
+init();
+</script>
 </body>
 </html>
