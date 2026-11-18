@@ -1,1 +1,404 @@
-
+{
+  "app": {
+    "title": "NEXUS AI/ML",
+    "subtitle": "Your engineering journey, measured in progress.",
+    "durationWeeks": 12,
+    "dailyHours": 8,
+    "theme": [
+      "black",
+      "green",
+      "white",
+      "blue"
+    ]
+  },
+  "resources": [
+    {
+      "title": "Python Tutorial",
+      "provider": "W3Schools",
+      "url": "https://www.w3schools.com/python/",
+      "tag": "Python"
+    },
+    {
+      "title": "Artificial Intelligence",
+      "provider": "GeeksforGeeks",
+      "url": "https://www.geeksforgeeks.org/artificial-intelligence/artificial-intelligence/",
+      "tag": "AI"
+    },
+    {
+      "title": "Machine Learning Tutorial",
+      "provider": "GeeksforGeeks",
+      "url": "https://www.geeksforgeeks.org/machine-learning/machine-learning-tutorial/",
+      "tag": "ML"
+    },
+    {
+      "title": "Mathematics for Machine Learning",
+      "provider": "GeeksforGeeks",
+      "url": "https://www.geeksforgeeks.org/machine-learning/machine-learning-mathematics/",
+      "tag": "Maths"
+    },
+    {
+      "title": "Deep Learning Tutorial",
+      "provider": "GeeksforGeeks",
+      "url": "https://www.geeksforgeeks.org/deep-learning/deep-learning-tutorial/",
+      "tag": "Deep Learning"
+    },
+    {
+      "title": "Natural Language Processing",
+      "provider": "GeeksforGeeks",
+      "url": "https://www.geeksforgeeks.org/nlp/natural-language-processing-nlp-tutorial/",
+      "tag": "NLP"
+    },
+    {
+      "title": "Computer Vision",
+      "provider": "GeeksforGeeks",
+      "url": "https://www.geeksforgeeks.org/computer-vision/computer-vision/",
+      "tag": "Computer Vision"
+    },
+    {
+      "title": "Generative AI",
+      "provider": "GeeksforGeeks",
+      "url": "https://www.geeksforgeeks.org/artificial-intelligence/what-is-generative-ai/",
+      "tag": "GenAI"
+    }
+  ],
+  "weeks": [
+    {
+      "week": 1,
+      "title": "Full Python",
+      "category": "FOUNDATION",
+      "description": "Build confident Python programming skills and learn the data stack used in AI/ML.",
+      "topics": [
+        "Python setup, syntax, variables and data types",
+        "Operators, expressions and type conversion",
+        "Conditional statements and logical operators",
+        "For loops, while loops, break and continue",
+        "Strings, indexing, slicing and string methods",
+        "Lists, tuples, sets and dictionaries",
+        "Functions, parameters, return values and scope",
+        "List/dict comprehensions and lambda basics",
+        "Modules, packages, pip and virtual environments",
+        "File handling: TXT, CSV and JSON",
+        "Exception handling and debugging",
+        "OOP: classes, objects, constructors and methods",
+        "Inheritance, encapsulation and polymorphism",
+        "NumPy: arrays, indexing, slicing and broadcasting",
+        "Pandas: Series, DataFrames, filtering and missing values",
+        "Matplotlib: line, bar, histogram and scatter plots"
+      ],
+      "targets": [
+        "Complete 50+ Python coding exercises",
+        "Complete 10 NumPy exercises",
+        "Complete 10 Pandas exercises",
+        "Build Student Performance Analysis mini-project",
+        "Push notebooks and code to GitHub"
+      ]
+    },
+    {
+      "week": 2,
+      "title": "Mathematics for AI/ML",
+      "category": "FOUNDATION",
+      "description": "Understand the mathematics behind data analysis, model training and evaluation.",
+      "topics": [
+        "Descriptive statistics: mean, median, mode and percentiles",
+        "Variance, standard deviation and distributions",
+        "Probability basics and sample spaces",
+        "Conditional probability and Bayes' theorem",
+        "Common probability distributions",
+        "Covariance and correlation",
+        "Vectors, scalars and vector operations",
+        "Matrices, dimensions and matrix multiplication",
+        "Dot product, transpose and identity matrix",
+        "Linear equations and distance metrics",
+        "Functions, limits and derivatives",
+        "Partial derivatives and chain rule intuition",
+        "Gradient descent and learning rate",
+        "Normalisation and standardisation",
+        "Implement statistics from scratch using Python"
+      ],
+      "targets": [
+        "Solve 50+ mathematics problems",
+        "Implement mean, variance and standard deviation in Python",
+        "Implement a simple gradient descent routine",
+        "Explain vectors, matrices, probability and derivatives",
+        "Prepare a one-page formula sheet"
+      ]
+    },
+    {
+      "week": 3,
+      "title": "Artificial Intelligence Fundamentals",
+      "category": "AI",
+      "description": "Learn how intelligent agents solve problems, search state spaces and make decisions.",
+      "topics": [
+        "AI fundamentals, history and applications",
+        "AI vs Machine Learning vs Deep Learning vs Generative AI",
+        "Intelligent agents and rationality",
+        "Agent environments and PEAS",
+        "Problem formulation and state spaces",
+        "Uninformed search: BFS and DFS",
+        "Uniform-cost search",
+        "Heuristic search and greedy best-first search",
+        "A* search algorithm",
+        "Adversarial search and minimax basics",
+        "Knowledge representation",
+        "Logic, inference and reasoning",
+        "Planning and decision-making",
+        "Ethics, bias, privacy and responsible AI"
+      ],
+      "targets": [
+        "Implement BFS and DFS",
+        "Implement A* on a small graph",
+        "Solve 15 AI programming exercises",
+        "Build a simple path-finding/search application",
+        "Explain intelligent agents and search strategies"
+      ]
+    },
+    {
+      "week": 4,
+      "title": "Machine Learning Fundamentals",
+      "category": "ML",
+      "description": "Learn the end-to-end machine learning workflow and foundational algorithms.",
+      "topics": [
+        "What is Machine Learning and common use cases",
+        "Supervised, unsupervised and reinforcement learning overview",
+        "ML workflow: problem, data, model and evaluation",
+        "Datasets, features, labels and data leakage",
+        "Data cleaning and missing-value handling",
+        "Exploratory Data Analysis (EDA)",
+        "Categorical encoding and feature scaling",
+        "Train, validation and test splits",
+        "Linear Regression",
+        "Cost functions and gradient descent intuition",
+        "Logistic Regression",
+        "Classification decision boundaries",
+        "Scikit-learn estimators and pipelines",
+        "Model evaluation fundamentals"
+      ],
+      "targets": [
+        "Complete two ML notebooks",
+        "Train one regression and one classification model",
+        "Build Student Performance Prediction model",
+        "Document dataset, features and evaluation",
+        "Push a reproducible notebook to GitHub"
+      ]
+    },
+    {
+      "week": 5,
+      "title": "Advanced Machine Learning",
+      "category": "ML",
+      "description": "Compare algorithms, tune models and evaluate them reliably.",
+      "topics": [
+        "Decision Trees and splitting criteria",
+        "Random Forest and ensemble learning",
+        "K-Nearest Neighbours",
+        "Support Vector Machines",
+        "Naive Bayes",
+        "K-Means clustering",
+        "Hierarchical clustering overview",
+        "Principal Component Analysis (PCA)",
+        "Overfitting, underfitting and bias-variance",
+        "Cross-validation",
+        "Confusion matrix",
+        "Accuracy, precision, recall and F1-score",
+        "ROC curve and AUC basics",
+        "Hyperparameter tuning with GridSearchCV/RandomizedSearchCV",
+        "Feature importance and model interpretation"
+      ],
+      "targets": [
+        "Implement at least six ML algorithms",
+        "Compare models using appropriate metrics",
+        "Complete one end-to-end ML project",
+        "Explain overfitting and cross-validation",
+        "Write a clear model evaluation report"
+      ]
+    },
+    {
+      "week": 6,
+      "title": "Deep Learning",
+      "category": "DEEP LEARNING",
+      "description": "Understand neural networks and train a first deep learning model.",
+      "topics": [
+        "Neural networks and biological inspiration",
+        "Perceptron, weights and biases",
+        "Activation functions: ReLU, sigmoid, tanh and softmax",
+        "Forward propagation",
+        "Loss functions",
+        "Backpropagation intuition",
+        "Gradient descent and optimizers",
+        "Batch size, epochs and learning rate",
+        "ANN implementation concepts",
+        "CNN architecture: convolution and pooling",
+        "PyTorch tensors and tensor operations",
+        "Datasets, DataLoaders and transforms",
+        "Build, train and evaluate a PyTorch model",
+        "Transfer learning fundamentals"
+      ],
+      "targets": [
+        "Build a basic neural network",
+        "Train an image classification model",
+        "Use PyTorch tensors and DataLoaders",
+        "Plot training and validation loss",
+        "Explain CNN layers and backpropagation"
+      ]
+    },
+    {
+      "week": 7,
+      "title": "NLP & Computer Vision",
+      "category": "SPECIALISATION",
+      "description": "Explore language and image data with practical introductory applications.",
+      "topics": [
+        "NLP pipeline and text normalisation",
+        "Tokenization and sentence splitting",
+        "Stop words, stemming and lemmatization",
+        "Bag of Words and TF-IDF",
+        "Text classification and sentiment analysis",
+        "Word embeddings and semantic similarity",
+        "Transformer architecture overview",
+        "Computer vision fundamentals and image representation",
+        "Pixels, channels, colour spaces and resizing",
+        "OpenCV image operations",
+        "Image augmentation and preprocessing",
+        "Image classification and CNN applications",
+        "Object detection concepts and evaluation overview"
+      ],
+      "targets": [
+        "Build a sentiment analysis application",
+        "Build an image classification application",
+        "Use OpenCV for basic image processing",
+        "Explain TF-IDF, embeddings and Transformers",
+        "Document both practical exercises"
+      ]
+    },
+    {
+      "week": 8,
+      "title": "Generative AI & AI Engineering",
+      "category": "GENAI",
+      "description": "Connect modern AI models to useful applications and learn deployment basics.",
+      "topics": [
+        "Generative AI concepts and use cases",
+        "Large Language Models (LLMs)",
+        "Transformer architecture and attention intuition",
+        "Prompt engineering and structured outputs",
+        "Hugging Face models and pipelines",
+        "Using an LLM API safely",
+        "Embeddings and semantic search",
+        "Vector databases and similarity search",
+        "RAG architecture: ingestion, chunking and retrieval",
+        "Build a basic document Q&A workflow",
+        "Git, GitHub and branching basics",
+        "FastAPI and REST API fundamentals",
+        "Streamlit or Gradio interfaces",
+        "Docker fundamentals and containers",
+        "Deployment, environment variables and secrets"
+      ],
+      "targets": [
+        "Build a basic document Q&A assistant",
+        "Create an AI application API",
+        "Publish code to GitHub",
+        "Create a simple interactive interface",
+        "Explain RAG and its limitations"
+      ]
+    },
+    {
+      "week": 9,
+      "title": "Portfolio Project 01 — Customer Churn",
+      "category": "PORTFOLIO",
+      "description": "Build a complete classical ML application from dataset to deployed interface.",
+      "topics": [
+        "Define the customer churn problem and success metric",
+        "Find and inspect a suitable public dataset",
+        "Perform data cleaning and exploratory analysis",
+        "Prepare features and prevent data leakage",
+        "Build baseline Logistic Regression model",
+        "Train and compare a Random Forest model",
+        "Evaluate precision, recall, F1 and confusion matrix",
+        "Tune hyperparameters and select a model",
+        "Save model and preprocessing pipeline",
+        "Build a Streamlit prediction dashboard",
+        "Write README, usage instructions and limitations"
+      ],
+      "targets": [
+        "Complete end-to-end Customer Churn Prediction project",
+        "Include reproducible training and inference code",
+        "Explain model choice and evaluation",
+        "Publish repository with screenshots and README"
+      ]
+    },
+    {
+      "week": 10,
+      "title": "Portfolio Project 02 — Image Classification",
+      "category": "PORTFOLIO",
+      "description": "Build and explain a deep learning image classifier.",
+      "topics": [
+        "Choose a manageable public image dataset",
+        "Inspect class balance and image quality",
+        "Create train, validation and test splits",
+        "Build image preprocessing and augmentation",
+        "Create a baseline CNN or use transfer learning",
+        "Train model and monitor loss curves",
+        "Evaluate accuracy and per-class performance",
+        "Inspect incorrect predictions",
+        "Build an image upload interface",
+        "Document model architecture and limitations"
+      ],
+      "targets": [
+        "Complete image classification application",
+        "Save model weights and inference code",
+        "Include sample predictions and evaluation",
+        "Publish repository and demo"
+      ]
+    },
+    {
+      "week": 11,
+      "title": "Portfolio Project 03 — AI Document Q&A",
+      "category": "PORTFOLIO",
+      "description": "Build a grounded document assistant using retrieval-augmented generation.",
+      "topics": [
+        "Define supported document types and user flow",
+        "Extract text from PDF documents",
+        "Chunk text with overlap",
+        "Generate embeddings",
+        "Store and search vectors",
+        "Retrieve relevant passages",
+        "Connect an LLM for grounded answer generation",
+        "Show source snippets or page references",
+        "Handle empty retrieval and unsupported questions",
+        "Evaluate answer relevance and faithfulness",
+        "Build upload and chat interface"
+      ],
+      "targets": [
+        "Complete a working PDF Document Q&A assistant",
+        "Show source references for answers",
+        "Test with questions answerable and unanswerable from documents",
+        "Publish repository, architecture and demo"
+      ]
+    },
+    {
+      "week": 12,
+      "title": "Deployment, GitHub & Job Preparation",
+      "category": "CAREER",
+      "description": "Polish projects, demonstrate engineering ability and prepare for entry-level roles.",
+      "topics": [
+        "Refactor project structure and remove unused files",
+        "Write professional project READMEs",
+        "Add requirements and setup instructions",
+        "Use Git branches and meaningful commits",
+        "Add input validation and basic tests",
+        "Deploy applications and verify live links",
+        "Learn Docker build and run workflow",
+        "Prepare project architecture diagrams",
+        "Create AI/ML Engineer resume",
+        "Optimise LinkedIn and GitHub profiles",
+        "Revise Python, SQL, statistics and ML interview topics",
+        "Practise project walkthroughs and mock interviews"
+      ],
+      "targets": [
+        "Publish three polished project repositories",
+        "Deploy working project demos where feasible",
+        "Complete one-page targeted resume",
+        "Prepare 30+ interview questions and answers",
+        "Practise at least two mock interviews",
+        "Apply to relevant entry-level AI/ML roles"
+      ]
+    }
+  ]
+}
