@@ -22,12 +22,7 @@ button{border:0;background:var(--green);color:#06130e;font-weight:750;cursor:poi
 <body>
 <header><div class="brand">NEXUS <span>AI/ML</span></div><div class="row"><span id="userLabel" class="muted"></span><button id="logoutBtn" class="secondary hidden">Logout</button></div></header>
 <main>
-<section id="setup" class="panel">
-<h2>Connect your Supabase project</h2><p class="muted">Enter your project URL and publishable/anon key. These are saved in this browser only.</p>
-<div class="field"><label>Supabase Project URL</label><input id="projectUrl" placeholder="https://your-project.supabase.co"></div>
-<div class="field"><label>Supabase publishable key (or legacy anon key)</label><input id="anonKey" placeholder="sb_publishable_... or eyJ..."></div>
-<button id="connectBtn">Connect Supabase</button><p id="setupMsg" class="status"></p>
-</section>
+
 <section id="auth" class="panel auth hidden">
 <h1>Welcome to <span style="color:var(--green)">NEXUS</span></h1><p class="muted">Sign in or create your learning account.</p>
 <div class="field"><label>Email</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com"></div>
