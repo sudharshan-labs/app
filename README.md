@@ -1,16 +1,26 @@
-# NEXUS AI/ML Progress Tracker — user.json edition
+# NEXUS AI/ML Progress Tracker — GitHub JSON edition
 
 ## Files
 - `index.html` — complete HTML, CSS and JavaScript application
-- `data.json` — read-only 12-week curriculum
-- `user.json` — user account and progress database template
+- `data.json` — 12-week curriculum, loaded automatically from GitHub Pages
+- `user.json` — initial account database, loaded automatically from GitHub Pages
 
-## Use
-1. Host `index.html` and `data.json` on GitHub Pages.
-2. Keep your real `user.json` private on your own device; do not commit personal account data to a public repository.
-3. Open the site in Chrome or Edge over HTTPS.
-4. Select **Open user.json** or **Create user.json** on the login screen.
-5. Register/login. Account data, SHA-256 password digests, learning progress and activity are written to the selected file.
+## GitHub Pages setup
+1. Put all three files in the same folder in your GitHub repository (the published Pages folder).
+2. Commit and push the files.
+3. Enable GitHub Pages for the repository.
+4. Open the published Pages URL. The app automatically fetches `./data.json` and `./user.json`; there is no file picker or manual file creation.
 
-## Limitations and security
-GitHub Pages is static hosting and cannot write visitor changes into a repository JSON file. The browser File System Access API writes only to the file selected by that browser user and requires permission; reconnect the file after a new browser session if needed. This does not synchronize users across devices. SHA-256 client-side hashing is not suitable for production authentication. Do not use this for sensitive accounts or publish a populated user.json. A secure shared multi-user service needs a backend/API with proper password hashing and access control.
+If you use a project site such as `https://USERNAME.github.io/REPOSITORY/`, relative paths make the app fetch the JSON files from that same project folder. Keep the filenames exactly `data.json` and `user.json`.
+
+## How account and progress storage works
+- `user.json` is fetched as a read-only starting account list. It must be valid JSON with a top-level `users` object.
+- New registrations and progress updates are saved in the current browser's `localStorage`. They remain on that browser/device and are not written back to GitHub.
+- The local browser records override matching entries from the fetched `user.json`.
+- The existing backup export/import controls can be used to move a learner's progress manually.
+
+## Important limitations and security
+- GitHub Pages is static hosting. Browser JavaScript can fetch public JSON files but cannot commit edits to the repository. Writing to GitHub requires a trusted server-side API or backend; never place a GitHub personal access token in `index.html`.
+- Do not put real passwords, private account data, or sensitive information in a public `user.json`. Anyone can download it. The included SHA-256 digest is not suitable for production password storage.
+- This version is a personal/demo tracker, not secure multi-user authentication. For shared accounts and cross-device progress syncing, use a backend database with secure password hashing and access controls.
+- Run the site through GitHub Pages or another HTTP(S) web server. Fetching local JSON from a `file://` URL may be blocked by browser security.
