@@ -1,102 +1,139 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#070b12">
-<title>NEXUS AI/ML — Learning Command Center</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEXUS AI/ML Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
-:root{--bg:#070b12;--panel:#0d1420;--panel2:#101b2b;--line:rgba(157,184,211,.13);--text:#f3f7fb;--muted:#8b9bad;--green:#42f5a1;--blue:#4c9dff;--cyan:#6ee7f9;--shadow:0 22px 70px rgba(0,0,0,.38)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 80% -10%,rgba(39,112,180,.19),transparent 34%),radial-gradient(ellipse at 0% 35%,rgba(25,190,120,.09),transparent 35%),var(--bg);color:var(--text);font-family:Manrope,system-ui,sans-serif;min-height:100vh}button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}.mono{font-family:'DM Mono',monospace}.muted{color:var(--muted)}.eyebrow{font:500 11px 'DM Mono';letter-spacing:2px;color:var(--green);text-transform:uppercase}.app{max-width:1440px;margin:auto;padding:24px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:28px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,var(--green),#0c9c72);display:grid;place-items:center;color:#04120d;font-weight:900;box-shadow:0 8px 30px #42f5a133}.brand h1{font-size:16px;letter-spacing:1.8px;margin:0}.brand small{color:var(--muted);font-size:10px;letter-spacing:1.6px}.top-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.pill{border:1px solid var(--line);border-radius:999px;padding:9px 13px;color:var(--muted);font-size:12px;background:#0b121c}.btn{border:1px solid var(--line);border-radius:12px;padding:11px 15px;background:#111d2b;color:var(--text);font-weight:700;font-size:12px;transition:.2s}.btn:hover{transform:translateY(-2px);border-color:#42f5a177;box-shadow:0 10px 25px #0005}.btn.primary{background:linear-gradient(120deg,var(--green),#17c9a0);border:0;color:#04120d}.btn.blue{background:linear-gradient(120deg,#4c9dff,#3174db);border:0;color:white}.btn.danger{color:#ff8f9a}.hero{display:grid;grid-template-columns:1.4fr .6fr;gap:18px;margin-bottom:18px}.hero-main,.hero-side,.panel,.stat,.week-card{background:linear-gradient(145deg,rgba(17,29,44,.96),rgba(9,16,26,.97));border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);position:relative;overflow:hidden}.hero-main{padding:30px;min-height:210px}.hero-main:after{content:"";position:absolute;width:270px;height:270px;border:1px solid #42f5a122;border-radius:50%;right:-50px;top:-125px;box-shadow:0 0 0 28px #42f5a008,0 0 0 58px #42f5a006}.hero h2{font-size:clamp(28px,4vw,48px);line-height:1.08;margin:12px 0}.gradient{background:linear-gradient(90deg,var(--green),var(--cyan),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:650px;color:#9caec0;line-height:1.7;font-size:13px}.hero-side{padding:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}.ring{width:138px;height:138px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--green) var(--progress,0%),#203044 0);position:relative;box-shadow:0 0 35px #42f5a11a}.ring:before{content:"";position:absolute;inset:9px;background:#0c1521;border-radius:50%}.ring-content{position:relative}.ring strong{font-size:30px;display:block}.ring span{font:10px 'DM Mono';color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}.stat{padding:18px 20px;transition:.25s}.stat:hover,.week-card:hover{transform:translateY(-4px);border-color:#42f5a155}.stat-label{font-size:11px;color:var(--muted)}.stat-value{font-size:27px;font-weight:800;margin:8px 0 3px}.stat-foot{font-size:10px;color:#6e8195}.stat-icon{float:right;color:var(--green);font-size:18px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;align-items:start}.panel{padding:22px;margin-bottom:18px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px}.section-head h3{margin:0;font-size:16px}.section-head p{margin:5px 0 0;color:var(--muted);font-size:11px}.week-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.week-card{padding:17px;cursor:pointer;transition:.25s;box-shadow:none}.week-card.active{border-color:#42f5a1aa;background:linear-gradient(145deg,#112b29,#101a29)}.week-top{display:flex;justify-content:space-between;align-items:center}.week-no{font:11px 'DM Mono';color:var(--green)}.tag{font:9px 'DM Mono';letter-spacing:1px;color:#9bb5cf;border:1px solid var(--line);padding:5px 7px;border-radius:999px}.week-card h4{margin:12px 0 5px;font-size:14px}.week-card p{font-size:11px;line-height:1.5;color:var(--muted);min-height:34px}.bar{height:5px;border-radius:9px;background:#243347;overflow:hidden;margin:12px 0 7px}.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:9px;transition:width .4s}.week-foot{display:flex;justify-content:space-between;font:10px 'DM Mono';color:var(--muted)}.detail-title{font-size:22px;margin:4px 0 8px}.detail-desc{font-size:12px;color:var(--muted);line-height:1.65}.topic-list{display:grid;gap:8px;margin-top:15px}.topic{display:flex;gap:11px;align-items:flex-start;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#0b1420;transition:.2s}.topic:hover{border-color:#4c9dff66}.topic input{appearance:none;flex:none;width:18px;height:18px;border:1px solid #536a7f;border-radius:5px;margin:1px 0 0;cursor:pointer;background:#101c2a}.topic input:checked{background:var(--green);border-color:var(--green)}.topic input:checked:after{content:"✓";display:block;color:#052016;font-weight:900;text-align:center;line-height:16px;font-size:13px}.topic label{font-size:12px;line-height:1.55;cursor:pointer}.topic.done label{color:#718899;text-decoration:line-through}.topic small{display:block;color:var(--muted);font-size:9px;margin-top:3px}.target-list{display:grid;gap:9px}.target{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:#c3d1df}.target input{accent-color:var(--green);margin-top:2px}.resource{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.resource:last-child{border:0}.resource strong{font-size:11px;display:block}.resource small{font-size:10px;color:var(--muted)}.resource a{color:var(--blue);text-decoration:none;font-size:11px;white-space:nowrap}.resource a:hover{text-decoration:underline}.side-title{font-size:13px;margin:0 0 14px}.activity{display:grid;gap:12px}.activity-item{border-left:2px solid #24465a;padding:2px 0 3px 12px}.activity-item strong{font-size:11px}.activity-item small{display:block;color:var(--muted);font-size:10px;margin-top:4px}.empty{padding:25px;text-align:center;color:var(--muted);font-size:12px}.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}.auth-card{width:min(460px,100%);padding:30px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,#101c2b,#080e17);box-shadow:0 30px 100px #0009;animation:rise .5s ease}.auth-card h2{font-size:27px;margin:14px 0 6px}.auth-card p{font-size:12px;color:var(--muted);line-height:1.6}.field{display:grid;gap:7px;margin:14px 0}.field label{font-size:11px;color:#b8c7d5}.field input{width:100%;background:#08111c;border:1px solid #26394d;border-radius:11px;padding:13px;color:white;outline:none}.field input:focus{border-color:var(--green);box-shadow:0 0 0 3px #42f5a118}.auth-switch{text-align:center;font-size:11px;margin-top:17px;color:var(--muted)}.link-btn{background:none;border:0;color:var(--green);font-weight:800}.notice{border:1px solid #4c9dff44;background:#10243a;color:#b9d8fa;padding:11px;border-radius:11px;font-size:10px;line-height:1.55;margin-top:15px}.toast{position:fixed;bottom:22px;right:22px;background:#10281f;border:1px solid #42f5a166;color:#dffff0;padding:13px 17px;border-radius:12px;box-shadow:var(--shadow);font-size:12px;z-index:20;animation:rise .25s}.footer{text-align:center;color:#53677c;font:10px 'DM Mono';padding:20px}.mobile-menu{display:none}
-@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes pulse{0%,100%{box-shadow:0 0 0 0 #42f5a122}50%{box-shadow:0 0 0 8px #42f5a100}}
-@media(max-width:950px){.layout{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-side{flex-direction:row;gap:20px}.stats{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.app{padding:14px}.topbar{align-items:flex-start}.brand h1{font-size:13px}.top-actions{justify-content:flex-end}.top-actions .pill{display:none}.hero-main{padding:22px}.hero-side{padding:17px}.ring{width:105px;height:105px}.ring strong{font-size:23px}.stats{gap:9px}.stat{padding:14px}.stat-value{font-size:22px}.week-grid{grid-template-columns:1fr}.panel{padding:16px}.section-head{align-items:flex-start}.top-actions .btn{padding:9px;font-size:10px}}
-</style>
-</head>
+:root{--bg:#080d12;--panel:#111a22;--panel2:#17232d;--text:#eef5f7;--muted:#91a3ad;--green:#39df9a;--blue:#62a8ff;--line:#263744;--red:#ff7777}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0%,#12352d 0,transparent 30%),var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,Segoe UI,Arial,sans-serif}
+header{padding:24px max(20px,calc((100% - 1180px)/2));border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.brand{font-size:22px;font-weight:850;letter-spacing:1px}.brand span{color:var(--green)}.muted{color:var(--muted)}main{max-width:1180px;margin:28px auto;padding:0 18px}
+.panel{background:linear-gradient(145deg,var(--panel),#0e171e);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 12px 35px #0003}
+h1,h2,h3{margin-top:0}h1{font-size:clamp(25px,4vw,38px);line-height:1.12}h2{font-size:21px}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+input,button{font:inherit;border-radius:10px;padding:11px 13px}input{background:#0a1218;color:var(--text);border:1px solid var(--line);width:100%;margin:5px 0 12px}
+button{border:0;background:var(--green);color:#06130e;font-weight:750;cursor:pointer}button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}button:disabled{opacity:.5;cursor:not-allowed}
+.auth{max-width:440px;margin:8vh auto}.field label{font-size:13px;color:var(--muted)}.hidden{display:none!important}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:15px}.stat strong{font-size:25px;display:block;color:var(--green)}
+.progressbar{height:9px;background:#263640;border-radius:99px;overflow:hidden}.progressbar i{height:100%;display:block;background:linear-gradient(90deg,var(--green),var(--blue));width:0}
+.week{border:1px solid var(--line);border-radius:14px;margin:12px 0;overflow:hidden}.weekhead{padding:15px;background:var(--panel2);cursor:pointer}.weekbody{padding:15px}.topic{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #22313a}.topic:last-child{border:0}.topic input{width:auto;margin:4px 0;accent-color:var(--green)}a{color:var(--blue)}.status{font-size:13px;color:var(--muted)}.notice{border-left:3px solid var(--blue);padding:10px 13px;background:#122231;border-radius:8px;color:#c7d9e5;font-size:13px}
+@media(max-width:650px){.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:span 2}}
+</style></head>
 <body>
-<div id="auth" class="auth-wrap">
- <div class="auth-card">
-  <div class="brand"><div class="logo">N</div><div><h1>NEXUS AI/ML</h1><small>LEARNING COMMAND CENTER</small></div></div>
-  <div class="eyebrow" style="margin-top:30px">YOUR 90-DAY ENGINEERING JOURNEY</div>
-  <h2 id="authTitle">Welcome back.</h2><p id="authSub">Sign in to continue tracking your AI/ML learning progress.</p>
-  <div id="fileStatus" class="notice" style="margin:18px 0 15px">Connecting to GitHub data files…</div><form id="authForm">
-   <div id="nameField" class="field hidden"><label>FULL NAME</label><input id="fullName" autocomplete="name" placeholder="Your name"></div>
-   <div class="field"><label>EMAIL ADDRESS</label><input id="email" type="email" required autocomplete="username" placeholder="you@example.com"></div>
-   <div class="field"><label>PASSWORD</label><input id="password" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters"></div>
-   <button class="btn primary" id="authSubmit" style="width:100%;margin-top:8px">Sign in →</button>
-  </form>
-  <div class="auth-switch" id="authSwitch">New here? <button class="link-btn" onclick="setAuthMode('register')">Create account</button></div>
-  <div class="notice">Curriculum and the initial account list are loaded from GitHub. New accounts and progress are saved only in this browser. This demo is not secure multi-user authentication; do not use a real password.</div>
- </div>
-</div>
-<div id="dashboard" class="app hidden">
- <header class="topbar">
-  <div class="brand"><div class="logo">N</div><div><h1>NEXUS <span class="gradient">AI/ML</span></h1><small>LEARNING COMMAND CENTER</small></div></div>
-  <div class="top-actions"><span class="pill" id="userPill">● LEARNER</span><button class="btn" onclick="exportBackup()">↓ Backup JSON</button><button class="btn" onclick="document.getElementById('importFile').click()">↑ Import</button><button class="btn danger" onclick="logout()">Logout</button><input id="importFile" type="file" accept="application/json" class="hidden"></div>
- </header>
- <section class="hero">
-  <div class="hero-main"><div class="eyebrow">PERSONAL LEARNING DASHBOARD · 12 WEEKS</div><h2>Build skills.<br><span class="gradient">Engineer intelligence.</span></h2><p id="welcomeText">Your AI/ML journey starts with one completed task. Track every topic, hit weekly targets and turn consistent effort into engineering ability.</p><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:18px"><span class="pill">◷ 8 HOURS / DAY</span><span class="pill">✦ 480H CORE + PORTFOLIO</span><span class="pill">⌘ SELF-PACED</span></div></div>
-  <div class="hero-side"><div class="ring" id="mainRing"><div class="ring-content"><strong id="overallPct">0%</strong><span>OVERALL PROGRESS</span></div></div><div><div class="eyebrow">YOUR MOMENTUM</div><h3 id="momentum" style="margin:8px 0 4px">Let's begin</h3><p class="muted" style="font-size:11px;line-height:1.5;margin:0">Small steps, consistently completed.</p></div></div>
- </section>
- <section class="stats">
-  <div class="stat"><span class="stat-icon">◫</span><div class="stat-label">TOPICS COMPLETED</div><div class="stat-value" id="completedStat">0 / 0</div><div class="stat-foot">Across your curriculum</div></div>
-  <div class="stat"><span class="stat-icon">◷</span><div class="stat-label">ESTIMATED STUDY HOURS</div><div class="stat-value" id="hoursStat">0h</div><div class="stat-foot">Based on checked topics*</div></div>
-  <div class="stat"><span class="stat-icon">▦</span><div class="stat-label">WEEKS COMPLETED</div><div class="stat-value" id="weeksStat">0 / 12</div><div class="stat-foot">All topics + targets checked</div></div>
-  <div class="stat"><span class="stat-icon">↗</span><div class="stat-label">TARGETS COMPLETED</div><div class="stat-value" id="targetsStat">0</div><div class="stat-foot">Weekly milestones</div></div>
- </section>
- <div class="layout">
-  <main>
-   <section class="panel"><div class="section-head"><div><h3>Learning roadmap</h3><p>Select a week to open its topics and targets.</p></div><span class="eyebrow">01 / ROADMAP</span></div><div id="weekGrid" class="week-grid"></div></section>
-   <section class="panel" id="weekDetail"><div class="empty">Loading your learning plan…</div></section>
-  </main>
-  <aside>
-   <section class="panel"><div class="section-head"><div><h3>Learning resources</h3><p>Curated links for your curriculum.</p></div></div><div id="resources"></div></section>
-   <section class="panel"><h3 class="side-title">Progress activity</h3><div id="activity" class="activity"><div class="empty">Your activity will appear here.</div></div></section>
-   <section class="panel"><h3 class="side-title">Progress insights</h3><div id="insights" class="muted" style="font-size:11px;line-height:1.8">Complete topics to generate insights.</div></section>
-  </aside>
- </div>
- <div class="footer">NEXUS AI/ML · BUILT FOR CONSISTENT PROGRESS · PROGRESS SAVED IN THIS BROWSER</div>
-</div>
+<header><div class="brand">NEXUS <span>AI/ML</span></div><div class="row"><span id="userLabel" class="muted"></span><button id="logoutBtn" class="secondary hidden">Logout</button></div></header>
+<main>
+<section id="setup" class="panel">
+<h2>Connect your Supabase project</h2><p class="muted">Enter your project URL and publishable/anon key. These are saved in this browser only.</p>
+<div class="field"><label>Supabase Project URL</label><input id="projectUrl" placeholder="https://your-project.supabase.co"></div>
+<div class="field"><label>Supabase publishable key (or legacy anon key)</label><input id="anonKey" placeholder="sb_publishable_... or eyJ..."></div>
+<button id="connectBtn">Connect Supabase</button><p id="setupMsg" class="status"></p>
+</section>
+<section id="auth" class="panel auth hidden">
+<h1>Welcome to <span style="color:var(--green)">NEXUS</span></h1><p class="muted">Sign in or create your learning account.</p>
+<div class="field"><label>Email</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com"></div>
+<div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="At least 6 characters"></div>
+<div class="row"><button id="loginBtn">Login</button><button id="registerBtn" class="secondary">Register</button></div><p id="authMsg" class="status"></p>
+<p class="muted" style="font-size:12px">If email confirmation is enabled in Supabase, confirm your email before logging in.</p>
+</section>
+<section id="dashboard" class="hidden">
+<div class="panel"><div class="row between"><div><p class="muted">YOUR LEARNING JOURNEY</p><h1 id="roadmapTitle">NEXUS AI/ML Roadmap</h1><p class="muted" id="roadmapDesc"></p></div><div style="min-width:180px"><strong id="overallPct" style="font-size:34px;color:var(--green)">0%</strong><div class="progressbar"><i id="overallBar"></i></div><span class="status">Overall completion</span></div></div></div>
+<div class="stats"><div class="stat"><span class="muted">Completed topics</span><strong id="doneCount">0</strong></div><div class="stat"><span class="muted">Total topics</span><strong id="totalCount">0</strong></div><div class="stat"><span class="muted">Weeks completed</span><strong id="weekCount">0/12</strong></div></div>
+<div class="panel" style="margin-top:18px"><div class="row between"><h2>12-Week Curriculum</h2><span id="saveStatus" class="status">Progress syncs to Supabase</span></div><div id="weeks"></div></div>
+</section>
+</main>
 <script>
-let curriculum=null, currentUser=null, authMode='login', activeWeek=1, userDatabase={format:'nexus-user-database',version:1,users:{}}, remoteUserDatabase={users:{}};
-// Keep data.json and user.json beside index.html in the GitHub Pages published folder.
-const CURRICULUM_URL='./data.json';
-const USER_DATABASE_URL='./user.json';
-const LOCAL_USERS_KEY='nexus-ai-ml-users-v2';
-const $=id=>document.getElementById(id);
-function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2800)}
-function setFileStatus(msg){$('fileStatus').textContent=msg}
-function setAuthMode(mode){authMode=mode;$('authTitle').textContent=mode==='register'?'Create your account.':'Welcome back.';$('authSub').textContent=mode==='register'?'Set up your learner profile and start your journey.':'Sign in to continue tracking your AI/ML learning progress.';$('nameField').classList.toggle('hidden',mode!=='register');$('fullName').required=mode==='register';$('authSubmit').textContent=mode==='register'?'Create account →':'Sign in →';$('authSwitch').innerHTML=mode==='register'?'Already registered? <button class="link-btn" onclick="setAuthMode(\'login\')">Sign in</button>':'New here? <button class="link-btn" onclick="setAuthMode(\'register\')">Create account</button>'}
-function blankProgress(){return {topics:{},targets:{},activity:[],createdAt:new Date().toISOString()}}
-async function passwordDigest(password){const bytes=new TextEncoder().encode(password);const hash=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('')}
-function loadLocalUsers(){try{const saved=JSON.parse(localStorage.getItem(LOCAL_USERS_KEY)||'{"users":{}}');return saved&&saved.users&&typeof saved.users==='object'?saved:{users:{}}}catch{return {users:{}}}}
-function saveLocalUsers(){localStorage.setItem(LOCAL_USERS_KEY,JSON.stringify(userDatabase))}
-async function loadUserDatabase(){const response=await fetch(USER_DATABASE_URL,{cache:'no-store'});if(!response.ok)throw Error(`Could not load user.json (HTTP ${response.status}). Make sure it is committed beside index.html.`);const parsed=await response.json();if(!parsed.users||typeof parsed.users!=='object')throw Error('user.json must contain a top-level users object.');remoteUserDatabase=parsed;const local=loadLocalUsers();userDatabase={format:'nexus-user-database',version:1,users:{...(parsed.users||{}),...(local.users||{})}};setFileStatus(`GitHub JSON connected · ${Object.keys(parsed.users).length} public record(s) loaded. Local registrations and progress stay in this browser.`)}
-function recordActivity(message){currentUser.progress.activity.unshift({message,at:new Date().toISOString()});currentUser.progress.activity=currentUser.progress.activity.slice(0,30)}
-$('authForm').addEventListener('submit',async e=>{e.preventDefault();try{const email=$('email').value.trim().toLowerCase(),password=$('password').value,users=userDatabase.users,passwordHash=await passwordDigest(password);if(authMode==='register'){const name=$('fullName').value.trim();if(!name){toast('Please enter your name');return}if(users[email]){toast('An account with this email already exists');return}users[email]={name,email,passwordHash,progress:blankProgress(),createdAt:new Date().toISOString()};saveLocalUsers();toast('Account created in this browser')}else if(!users[email]||users[email].passwordHash!==passwordHash){toast('Invalid email or password');return}startSession(email)}catch(err){toast(err.message||'Could not save local account data')}});
-function startSession(email){const user=userDatabase.users[email];if(!user)return;currentUser=user;if(!currentUser.progress)currentUser.progress=blankProgress();$('auth').classList.add('hidden');$('dashboard').classList.remove('hidden');$('userPill').textContent='● '+currentUser.name.toUpperCase();$('welcomeText').textContent=`Welcome, ${currentUser.name}. Your next milestone is waiting. Track every topic, hit weekly targets and turn consistent effort into engineering ability.`;renderAll()}
-async function persist(){if(!currentUser)return;try{userDatabase.users[currentUser.email]=currentUser;userDatabase.updatedAt=new Date().toISOString();saveLocalUsers();renderAll()}catch(e){toast('Save failed: '+e.message)}}
-function logout(){currentUser=null;$('dashboard').classList.add('hidden');$('auth').classList.remove('hidden');$('authForm').reset();setAuthMode('login')}
-function allTopicCount(){return curriculum.weeks.reduce((n,w)=>n+w.topics.length,0)}
-function completedTopicCount(){return Object.values(currentUser.progress.topics).filter(Boolean).length}
-function completedTargetCount(){return Object.values(currentUser.progress.targets).filter(Boolean).length}
-function weekStats(w){const topics=w.topics.filter((_,i)=>currentUser.progress.topics[`${w.week}:${i}`]).length;const targets=w.targets.filter((_,i)=>currentUser.progress.targets[`${w.week}:${i}`]).length;return {topics,totalTopics:w.topics.length,targets,totalTargets:w.targets.length,pct:Math.round(((topics+targets)/(w.topics.length+w.targets.length))*100),done:topics===w.topics.length&&targets===w.targets.length}}
-function renderAll(){renderStats();renderWeeks();renderDetail();renderResources();renderActivity();renderInsights()}
-function renderStats(){const total=allTopicCount(),done=completedTopicCount(),targetDone=completedTargetCount(),weeks=curriculum.weeks.filter(w=>weekStats(w).done).length,pct=Math.round(done/total*100);$('overallPct').textContent=pct+'%';$('mainRing').style.setProperty('--progress',pct+'%');$('completedStat').textContent=`${done} / ${total}`;$('hoursStat').textContent=Math.round(done*0.5)+'h';$('weeksStat').textContent=`${weeks} / 12`;$('targetsStat').textContent=targetDone;$('momentum').textContent=pct===100?'Curriculum complete':pct>=60?'Great momentum':pct>=20?'Building consistency':'Let’s begin'}
-function renderWeeks(){$('weekGrid').innerHTML=curriculum.weeks.map(w=>{const s=weekStats(w);return `<article class="week-card ${activeWeek===w.week?'active':''}" onclick="selectWeek(${w.week})"><div class="week-top"><span class="week-no">WEEK ${String(w.week).padStart(2,'0')}</span><span class="tag">${w.category}</span></div><h4>${escapeHtml(w.title)}</h4><p>${escapeHtml(w.description)}</p><div class="bar"><span style="width:${s.pct}%"></span></div><div class="week-foot"><span>${s.topics}/${s.totalTopics} topics · ${s.targets}/${s.totalTargets} targets</span><strong>${s.pct}%</strong></div></article>`}).join('')}
-function selectWeek(n){activeWeek=n;renderWeeks();renderDetail();$('weekDetail').scrollIntoView({behavior:'smooth',block:'start'})}
-function renderDetail(){const w=curriculum.weeks.find(x=>x.week===activeWeek);if(!w)return;const s=weekStats(w);const topics=w.topics.map((t,i)=>{const key=`${w.week}:${i}`,checked=!!currentUser.progress.topics[key];return `<div class="topic ${checked?'done':''}"><input type="checkbox" id="topic-${key}" ${checked?'checked':''} onchange="toggleItem('topics','${key}',this.checked,'${escapeAttr(t)}')"><label for="topic-${key}">${escapeHtml(t)}<small>LEARNING TOPIC · WEEK ${w.week}</small></label></div>`}).join('');const targets=w.targets.map((t,i)=>{const key=`${w.week}:${i}`,checked=!!currentUser.progress.targets[key];return `<label class="target"><input type="checkbox" ${checked?'checked':''} onchange="toggleItem('targets','${key}',this.checked,'${escapeAttr(t)}')"><span>${escapeHtml(t)}</span></label>`}).join('');$('weekDetail').innerHTML=`<div class="section-head"><div><span class="eyebrow">WEEK ${String(w.week).padStart(2,'0')} · ${w.category}</span><h2 class="detail-title">${escapeHtml(w.title)}</h2><p class="detail-desc">${escapeHtml(w.description)}</p></div><span class="tag">${s.pct}% COMPLETE</span></div><div class="bar"><span style="width:${s.pct}%"></span></div><div class="week-foot"><span>${s.topics} of ${s.totalTopics} topics</span><span>${s.targets} of ${s.totalTargets} targets</span></div><h4 style="font-size:12px;margin:22px 0 10px">TOPIC CHECKLIST</h4><div class="topic-list">${topics}</div><h4 style="font-size:12px;margin:24px 0 12px">WEEKLY TARGETS</h4><div class="target-list">${targets}</div>`}
-async function toggleItem(type,key,checked,label){currentUser.progress[type][key]=checked;if(checked)recordActivity(`Completed: ${label}`);else recordActivity(`Reopened: ${label}`);await persist();toast(checked?'Progress saved ✓':'Progress updated')}
-function renderResources(){$('resources').innerHTML=curriculum.resources.map(r=>`<div class="resource"><div><strong>${escapeHtml(r.title)}</strong><small>${escapeHtml(r.provider)} · ${escapeHtml(r.tag)}</small></div><a href="${r.url}" target="_blank" rel="noopener noreferrer">Open ↗</a></div>`).join('')}
-function renderActivity(){const a=currentUser.progress.activity||[];$('activity').innerHTML=a.length?a.slice(0,7).map(x=>`<div class="activity-item"><strong>${escapeHtml(x.message)}</strong><small>${new Date(x.at).toLocaleString()}</small></div>`).join(''):'<div class="empty">Tick a topic or target to start your activity timeline.</div>'}
-function renderInsights(){const total=allTopicCount(),done=completedTopicCount(),pct=Math.round(done/total*100),best=curriculum.weeks.map(w=>({title:w.title,pct:weekStats(w).pct})).sort((a,b)=>b.pct-a.pct)[0];$('insights').innerHTML=`<div>• You have completed <b style="color:var(--green)">${pct}%</b> of all learning topics.</div><div>• <b style="color:white">${completedTargetCount()}</b> weekly targets checked off.</div><div>• Strongest week: <b style="color:var(--cyan)">${escapeHtml(best.title)}</b> (${best.pct}%).</div><div>• Estimated study time uses 30 minutes per completed topic; update it mentally to match your actual sessions.</div><div style="margin-top:10px;color:#70869b">Tip: Check items only after you can explain or demonstrate the concept without copying.</div>`}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function escapeAttr(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/[\r\n]/g,' ')}
-function exportBackup(){const payload={format:'nexus-ai-ml-progress',version:1,exportedAt:new Date().toISOString(),user:{name:currentUser.name,email:currentUser.email,progress:currentUser.progress}};downloadBlob(JSON.stringify(payload,null,2),`nexus-progress-${currentUser.email.replace(/[^a-z0-9]/gi,'_')}.json`,'application/json');toast('Progress backup exported')}
-function downloadBlob(content,name,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
-$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(data.format!=='nexus-ai-ml-progress'||!data.user?.progress)throw Error('Invalid backup');if(data.user.email.toLowerCase()!==currentUser.email.toLowerCase())throw Error('This backup belongs to a different account');if(!confirm('Replace your current progress with this backup?'))return;currentUser.progress=data.user.progress;await persist();toast('Progress restored successfully')}catch(err){toast(err.message||'Could not import file')}e.target.value=''});
-async function init(){try{setAuthStatusLoading();const [curriculumResponse]=await Promise.all([fetch(CURRICULUM_URL,{cache:'no-store'}),loadUserDatabase()]);if(!curriculumResponse.ok)throw Error(`Could not load data.json (HTTP ${curriculumResponse.status}). Make sure it is committed beside index.html.`);curriculum=await curriculumResponse.json();setAuthMode('login')}catch(e){$('authTitle').textContent='Unable to load GitHub data';$('authSub').textContent=e.message||'Check that data.json and user.json are available beside index.html in your GitHub Pages folder.';setFileStatus('GitHub data connection failed. Check repository files and Pages deployment.');console.error(e)}}
-function setAuthStatusLoading(){setFileStatus('Loading data.json and user.json from GitHub…')}
+const $ = id => document.getElementById(id);
+let supabaseClient = null, curriculum = null, progress = {};
+const STORAGE_URL = "nexus_supabase_url", STORAGE_KEY = "nexus_supabase_anon_key";
+function show(id){["setup","auth","dashboard"].forEach(x=>$(x).classList.toggle("hidden",x!==id));}
+function setMsg(id,msg){$(id).textContent=msg;}
+async function loadCurriculum(){
+  const response = await fetch("./data.json",{cache:"no-store"});
+  if(!response.ok) throw new Error("Could not load data.json. Keep it beside index.html.");
+  curriculum = await response.json();
+  $("roadmapTitle").textContent=curriculum.title||"NEXUS AI/ML Roadmap";
+  $("roadmapDesc").textContent=curriculum.description||"";
+}
+async function connect(){
+  const url=$("projectUrl").value.trim().replace(/\/$/,""), key=$("anonKey").value.trim();
+  if(!url||!key){setMsg("setupMsg","Enter both the Supabase URL and publishable/anon key.");return;}
+  if(!/^https:\/\/.+\.supabase\.co$/.test(url)){setMsg("setupMsg","Enter a valid https://PROJECT.supabase.co URL.");return;}
+  localStorage.setItem(STORAGE_URL,url);localStorage.setItem(STORAGE_KEY,key);
+  supabaseClient=window.supabase.createClient(url,key);
+  try{await loadCurriculum();setMsg("setupMsg","Connected. You can now register or log in.");show("auth");}
+  catch(e){setMsg("setupMsg",e.message);}
+}
+async function init(){
+  const url=localStorage.getItem(STORAGE_URL),key=localStorage.getItem(STORAGE_KEY);
+  if(!url||!key){show("setup");return;}
+  $("projectUrl").value=url;$("anonKey").value=key;
+  supabaseClient=window.supabase.createClient(url,key);
+  try{await loadCurriculum();const {data:{session}}=await supabaseClient.auth.getSession();if(session)await openDashboard(session.user);else show("auth");}
+  catch(e){show("setup");setMsg("setupMsg",e.message);}
+}
+async function register(){
+  setMsg("authMsg","Creating account...");
+  const {data,error}=await supabaseClient.auth.signUp({email:$("email").value.trim(),password:$("password").value});
+  if(error){setMsg("authMsg",error.message);return;}
+  if(data.session){await openDashboard(data.user);}
+  else setMsg("authMsg","Registration received. Check your email if confirmation is enabled, then log in.");
+}
+async function login(){
+  setMsg("authMsg","Signing in...");
+  const {data,error}=await supabaseClient.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+  if(error){setMsg("authMsg",error.message);return;}
+  await openDashboard(data.user);
+}
+async function openDashboard(user){
+  $("userLabel").textContent=user.email||"Signed in";$("logoutBtn").classList.remove("hidden");
+  show("dashboard");
+  const {data,error}=await supabaseClient.from("nexus_progress").select("progress").eq("user_id",user.id).maybeSingle();
+  if(error){setMsg("saveStatus","Database error: "+error.message+" — run supabase_schema.sql.");progress={};}
+  else progress=data?.progress||{};
+  render();
+}
+function topicKey(w,t){return `w${w}_t${t}`;}
+function render(){
+  const weeks=curriculum.weeks||[];let total=0,done=0,completedWeeks=0;
+  $("weeks").innerHTML="";
+  weeks.forEach((week,wi)=>{
+    let weekDone=0;total+=week.topics.length;
+    week.topics.forEach((_,ti)=>{if(progress[topicKey(week.week,ti)]){done++;weekDone++;}});
+    if(week.topics.length&&weekDone===week.topics.length)completedWeeks++;
+    const wrap=document.createElement("div");wrap.className="week";
+    const head=document.createElement("div");head.className="weekhead";
+    const pct=week.topics.length?Math.round(weekDone/week.topics.length*100):0;
+    head.innerHTML=`<div class="row between"><strong>Week ${week.week}: ${escapeHtml(week.title)}</strong><span class="status">${weekDone}/${week.topics.length} · ${pct}%</span></div><div class="progressbar" style="margin-top:10px"><i style="width:${pct}%"></i></div>`;
+    const body=document.createElement("div");body.className="weekbody";
+    const goal=document.createElement("p");goal.className="muted";goal.textContent=week.goal||"";body.appendChild(goal);
+    week.topics.forEach((topic,ti)=>{
+      const label=document.createElement("label");label.className="topic";
+      const cb=document.createElement("input");cb.type="checkbox";cb.checked=!!progress[topicKey(week.week,ti)];
+      cb.addEventListener("change",()=>{progress[topicKey(week.week,ti)]=cb.checked;saveProgress();render();});
+      const span=document.createElement("span");span.textContent=topic;label.append(cb,span);body.appendChild(label);
+    });
+    if(week.resources?.length){const r=document.createElement("p");r.innerHTML="<strong>Resources: </strong>"+week.resources.map(x=>`<a href="${safeUrl(x.url)}" target="_blank" rel="noopener">${escapeHtml(x.label)}</a>`).join(" · ");body.appendChild(r);}
+    head.addEventListener("click",()=>body.classList.toggle("hidden"));
+    wrap.append(head,body);$("weeks").appendChild(wrap);
+  });
+  const pct=total?Math.round(done/total*100):0;$("doneCount").textContent=done;$("totalCount").textContent=total;$("weekCount").textContent=`${completedWeeks}/${weeks.length}`;$("overallPct").textContent=pct+"%";$("overallBar").style.width=pct+"%";
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function safeUrl(s){try{const u=new URL(s);return u.protocol==="https:"?u.href:"#";}catch{return "#";}}
+let saveTimer;
+async function saveProgress(){
+  $("saveStatus").textContent="Saving...";
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    const {data:{user}}=await supabaseClient.auth.getUser();
+    if(!user){$("saveStatus").textContent="Session expired. Log in again.";return;}
+    const {error}=await supabaseClient.from("nexus_progress").upsert({user_id:user.id,progress,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+    $("saveStatus").textContent=error?"Save failed: "+error.message:"Progress saved to Supabase ✓";
+  },350);
+}
+$("connectBtn").addEventListener("click",connect);
+$("registerBtn").addEventListener("click",register);
+$("loginBtn").addEventListener("click",login);
+$("logoutBtn").addEventListener("click",async()=>{await supabaseClient.auth.signOut();$("userLabel").textContent="";$("logoutBtn").classList.add("hidden");show("auth");});
 init();
-</script>
-</body></html>
+</script></body></html>
