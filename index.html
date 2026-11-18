@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#070b12">
-<title>NEXUS AI/ML — Learning Command Center</title>
+<title> AI/ML — Learning Command Center</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
 :root{--bg:#070b12;--panel:#0d1420;--panel2:#101b2b;--line:rgba(157,184,211,.13);--text:#f3f7fb;--muted:#8b9bad;--green:#42f5a1;--blue:#4c9dff;--cyan:#6ee7f9;--shadow:0 22px 70px rgba(0,0,0,.38)}
@@ -16,7 +16,7 @@
 <body>
 <div id="auth" class="auth-wrap">
  <div class="auth-card">
-  <div class="brand"><div class="logo">N</div><div><h1>NEXUS AI/ML</h1><small>LEARNING COMMAND CENTER</small></div></div>
+  <div class="brand"><div class="logo">N</div><div><h1> AI/ML</h1><small>LEARNING COMMAND CENTER</small></div></div>
   <div class="eyebrow" style="margin-top:30px">YOUR 90-DAY ENGINEERING JOURNEY</div>
   <h2 id="authTitle">Welcome back.</h2><p id="authSub">Sign in to continue tracking your AI/ML learning progress.</p>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:18px 0 12px"><button type="button" class="btn blue" onclick="connectUserFile()">Open user.json</button><button type="button" class="btn" onclick="createUserFile()">Create user.json</button></div><div id="fileStatus" class="notice" style="margin:0 0 15px">Connect your user.json file before registering or signing in.</div><form id="authForm">
@@ -31,7 +31,7 @@
 </div>
 <div id="dashboard" class="app hidden">
  <header class="topbar">
-  <div class="brand"><div class="logo">N</div><div><h1>NEXUS <span class="gradient">AI/ML</span></h1><small>LEARNING COMMAND CENTER</small></div></div>
+  <div class="brand"><div class="logo">N</div><div><h1> <span class="gradient">AI/ML</span></h1><small>LEARNING COMMAND CENTER</small></div></div>
   <div class="top-actions"><span class="pill" id="userPill">● LEARNER</span><button class="btn" onclick="exportBackup()">↓ Backup JSON</button><button class="btn" onclick="document.getElementById('importFile').click()">↑ Import</button><button class="btn danger" onclick="logout()">Logout</button><input id="importFile" type="file" accept="application/json" class="hidden"></div>
  </header>
  <section class="hero">
@@ -55,7 +55,7 @@
    <section class="panel"><h3 class="side-title">Progress insights</h3><div id="insights" class="muted" style="font-size:11px;line-height:1.8">Complete topics to generate insights.</div></section>
   </aside>
  </div>
- <div class="footer">NEXUS AI/ML · BUILT FOR CONSISTENT PROGRESS · USER DATA SAVED TO YOUR SELECTED JSON FILE</div>
+ <div class="footer"> AI/ML · BUILT FOR CONSISTENT PROGRESS · USER DATA SAVED TO YOUR SELECTED JSON FILE</div>
 </div>
 <script>
 let curriculum=null, currentUser=null, authMode='login', activeWeek=1, userFileHandle=null, userDatabase={users:{}};
@@ -65,10 +65,10 @@ function setFileStatus(msg){$('fileStatus').textContent=msg}
 function setAuthMode(mode){authMode=mode;$('authTitle').textContent=mode==='register'?'Create your account.':'Welcome back.';$('authSub').textContent=mode==='register'?'Set up your learner profile and start your journey.':'Sign in to continue tracking your AI/ML learning progress.';$('nameField').classList.toggle('hidden',mode!=='register');$('fullName').required=mode==='register';$('authSubmit').textContent=mode==='register'?'Create account →':'Sign in →';$('authSwitch').innerHTML=mode==='register'?'Already registered? <button class="link-btn" onclick="setAuthMode(\'login\')">Sign in</button>':'New here? <button class="link-btn" onclick="setAuthMode(\'register\')">Create account</button>'}
 function blankProgress(){return {topics:{},targets:{},activity:[],createdAt:new Date().toISOString()}}
 async function passwordDigest(password){const bytes=new TextEncoder().encode(password);const hash=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('')}
-async function readUserFile(){if(!userFileHandle)throw Error('Connect user.json first');const raw=await (await userFileHandle.getFile()).text();const parsed=raw.trim()?JSON.parse(raw):{format:'nexus-user-database',version:1,users:{}};if(!parsed.users||typeof parsed.users!=='object')throw Error('Invalid user.json structure');userDatabase=parsed;userDatabase.format='nexus-user-database';userDatabase.version=1}
+async function readUserFile(){if(!userFileHandle)throw Error('Connect user.json first');const raw=await (await userFileHandle.getFile()).text();const parsed=raw.trim()?JSON.parse(raw):{format:'-user-database',version:1,users:{}};if(!parsed.users||typeof parsed.users!=='object')throw Error('Invalid user.json structure');userDatabase=parsed;userDatabase.format='-user-database';userDatabase.version=1}
 async function writeUserFile(){if(!userFileHandle)throw Error('Connect user.json first');const writable=await userFileHandle.createWritable();await writable.write(JSON.stringify(userDatabase,null,2));await writable.close();setFileStatus(`Connected: ${userFileHandle.name} · saved to this file.`)}
 async function connectUserFile(){try{if(!window.showOpenFilePicker){toast('Use Chrome or Edge over HTTPS to connect user.json');return}const [handle]=await window.showOpenFilePicker({multiple:false,types:[{description:'JSON database',accept:{'application/json':['.json']}}]});userFileHandle=handle;await readUserFile();setFileStatus(`Connected: ${handle.name} · ${Object.keys(userDatabase.users).length} account(s) found.`);toast('user.json connected')}catch(e){if(e.name!=='AbortError')toast(e.message||'Could not open user.json')}}
-async function createUserFile(){try{if(!window.showSaveFilePicker){toast('Use Chrome or Edge over HTTPS to create user.json');return}userFileHandle=await window.showSaveFilePicker({suggestedName:'user.json',types:[{description:'JSON database',accept:{'application/json':['.json']}}]});userDatabase={format:'nexus-user-database',version:1,updatedAt:new Date().toISOString(),users:{}};await writeUserFile();toast('user.json created and connected')}catch(e){if(e.name!=='AbortError')toast(e.message||'Could not create user.json')}}
+async function createUserFile(){try{if(!window.showSaveFilePicker){toast('Use Chrome or Edge over HTTPS to create user.json');return}userFileHandle=await window.showSaveFilePicker({suggestedName:'user.json',types:[{description:'JSON database',accept:{'application/json':['.json']}}]});userDatabase={format:'-user-database',version:1,updatedAt:new Date().toISOString(),users:{}};await writeUserFile();toast('user.json created and connected')}catch(e){if(e.name!=='AbortError')toast(e.message||'Could not create user.json')}}
 function recordActivity(message){currentUser.progress.activity.unshift({message,at:new Date().toISOString()});currentUser.progress.activity=currentUser.progress.activity.slice(0,30)}
 $('authForm').addEventListener('submit',async e=>{e.preventDefault();try{if(!userFileHandle){toast('Please open or create user.json first');return}await readUserFile();const email=$('email').value.trim().toLowerCase(),password=$('password').value,users=userDatabase.users,passwordHash=await passwordDigest(password);if(authMode==='register'){const name=$('fullName').value.trim();if(!name){toast('Please enter your name');return}if(users[email]){toast('An account with this email already exists');return}users[email]={name,email,passwordHash,progress:blankProgress(),createdAt:new Date().toISOString()};userDatabase.updatedAt=new Date().toISOString();await writeUserFile();toast('Account saved to user.json')}else if(!users[email]||users[email].passwordHash!==passwordHash){toast('Invalid email or password');return}startSession(email)}catch(err){toast(err.message||'Could not access user.json')}});
 function startSession(email){const user=userDatabase.users[email];if(!user)return;currentUser=user;if(!currentUser.progress)currentUser.progress=blankProgress();$('auth').classList.add('hidden');$('dashboard').classList.remove('hidden');$('userPill').textContent='● '+currentUser.name.toUpperCase();$('welcomeText').textContent=`Welcome, ${currentUser.name}. Your next milestone is waiting. Track every topic, hit weekly targets and turn consistent effort into engineering ability.`;renderAll()}
@@ -89,9 +89,9 @@ function renderActivity(){const a=currentUser.progress.activity||[];$('activity'
 function renderInsights(){const total=allTopicCount(),done=completedTopicCount(),pct=Math.round(done/total*100),best=curriculum.weeks.map(w=>({title:w.title,pct:weekStats(w).pct})).sort((a,b)=>b.pct-a.pct)[0];$('insights').innerHTML=`<div>• You have completed <b style="color:var(--green)">${pct}%</b> of all learning topics.</div><div>• <b style="color:white">${completedTargetCount()}</b> weekly targets checked off.</div><div>• Strongest week: <b style="color:var(--cyan)">${escapeHtml(best.title)}</b> (${best.pct}%).</div><div>• Estimated study time uses 30 minutes per completed topic; update it mentally to match your actual sessions.</div><div style="margin-top:10px;color:#70869b">Tip: Check items only after you can explain or demonstrate the concept without copying.</div>`}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function escapeAttr(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/[\r\n]/g,' ')}
-function exportBackup(){const payload={format:'nexus-ai-ml-progress',version:1,exportedAt:new Date().toISOString(),user:{name:currentUser.name,email:currentUser.email,progress:currentUser.progress}};downloadBlob(JSON.stringify(payload,null,2),`nexus-progress-${currentUser.email.replace(/[^a-z0-9]/gi,'_')}.json`,'application/json');toast('Progress backup exported')}
+function exportBackup(){const payload={format:'-ai-ml-progress',version:1,exportedAt:new Date().toISOString(),user:{name:currentUser.name,email:currentUser.email,progress:currentUser.progress}};downloadBlob(JSON.stringify(payload,null,2),`-progress-${currentUser.email.replace(/[^a-z0-9]/gi,'_')}.json`,'application/json');toast('Progress backup exported')}
 function downloadBlob(content,name,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
-$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(data.format!=='nexus-ai-ml-progress'||!data.user?.progress)throw Error('Invalid backup');if(data.user.email.toLowerCase()!==currentUser.email.toLowerCase())throw Error('This backup belongs to a different account');if(!confirm('Replace your current progress with this backup?'))return;currentUser.progress=data.user.progress;await persist();toast('Progress restored successfully')}catch(err){toast(err.message||'Could not import file')}e.target.value=''});
+$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(data.format!=='-ai-ml-progress'||!data.user?.progress)throw Error('Invalid backup');if(data.user.email.toLowerCase()!==currentUser.email.toLowerCase())throw Error('This backup belongs to a different account');if(!confirm('Replace your current progress with this backup?'))return;currentUser.progress=data.user.progress;await persist();toast('Progress restored successfully')}catch(err){toast(err.message||'Could not import file')}e.target.value=''});
 async function init(){try{const res=await fetch('./data.json');if(!res.ok)throw Error('Could not load data.json');curriculum=await res.json();setAuthMode('login')}catch(e){$('authTitle').textContent='Curriculum file not found';$('authSub').textContent='Keep index.html and data.json in the same GitHub Pages folder. Open this app through GitHub Pages or a local web server.';console.error(e)}}
 init();
 </script>
