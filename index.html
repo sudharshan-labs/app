@@ -44,7 +44,7 @@ button{border:0;background:var(--green);color:#06130e;font-weight:750;cursor:poi
 <script>
 const $ = id => document.getElementById(id);
 let supabaseClient = null, curriculum = null, progress = {};
-const STORAGE_URL = "nexus_supabase_url", STORAGE_KEY = "nexus_supabase_anon_key";
+const STORAGE_URL = "https://hfqzuhlvvzxjrfsrsinw.supabase.co", STORAGE_KEY = "sb_publishable_IGBpCd0-nWbKebt_aSTGPA_6Ogyp8bi";
 function show(id){["setup","auth","dashboard"].forEach(x=>$(x).classList.toggle("hidden",x!==id));}
 function setMsg(id,msg){$(id).textContent=msg;}
 async function loadCurriculum(){
