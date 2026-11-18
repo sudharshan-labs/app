@@ -30,18 +30,28 @@ button{border:0;background:var(--green);color:#06130e;font-weight:750;cursor:poi
 <div class="row"><button id="loginBtn">Login</button><button id="registerBtn" class="secondary">Register</button></div><p id="authMsg" class="status"></p>
 <p class="muted" style="font-size:12px">If email confirmation is enabled in Supabase, confirm your email before logging in.</p>
 </section>
+
 <section id="dashboard" class="hidden">
 <div class="panel"><div class="row between"><div><p class="muted">YOUR LEARNING JOURNEY</p><h1 id="roadmapTitle">NEXUS AI/ML Roadmap</h1><p class="muted" id="roadmapDesc"></p></div><div style="min-width:180px"><strong id="overallPct" style="font-size:34px;color:var(--green)">0%</strong><div class="progressbar"><i id="overallBar"></i></div><span class="status">Overall completion</span></div></div></div>
 <div class="stats"><div class="stat"><span class="muted">Completed topics</span><strong id="doneCount">0</strong></div><div class="stat"><span class="muted">Total topics</span><strong id="totalCount">0</strong></div><div class="stat"><span class="muted">Weeks completed</span><strong id="weekCount">0/12</strong></div></div>
 <div class="panel" style="margin-top:18px"><div class="row between"><h2>12-Week Curriculum</h2><span id="saveStatus" class="status">Progress syncs to Supabase</span></div><div id="weeks"></div></div>
 </section>
 </main>
+
 <script>
 const $ = id => document.getElementById(id);
+
+// FIX 1: these are the real credentials (not localStorage key names)
+const SUPABASE_URL = "https://hfqzuhlvvzxjrfsrsinw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_IGBpCd0-nWbKebt_aSTGPA_6Ogyp8bi";
+
 let supabaseClient = null, curriculum = null, progress = {};
-const STORAGE_URL = "https://hfqzuhlvvzxjrfsrsinw.supabase.co", STORAGE_KEY = "sb_publishable_IGBpCd0-nWbKebt_aSTGPA_6Ogyp8bi";
-function show(id){["setup","auth","dashboard"].forEach(x=>$(x).classList.toggle("hidden",x!==id));}
+const collapsedWeeks = new Set();   // FIX 3: remember collapsed weeks across re-renders
+
+// FIX 2: only sections that actually exist
+function show(id){["auth","dashboard"].forEach(x=>$(x).classList.toggle("hidden",x!==id));}
 function setMsg(id,msg){$(id).textContent=msg;}
+
 async function loadCurriculum(){
   const response = await fetch("./data.json",{cache:"no-store"});
   if(!response.ok) throw new Error("Could not load data.json. Keep it beside index.html.");
@@ -49,23 +59,19 @@ async function loadCurriculum(){
   $("roadmapTitle").textContent=curriculum.title||"NEXUS AI/ML Roadmap";
   $("roadmapDesc").textContent=curriculum.description||"";
 }
-async function connect(){
-  const url=$("projectUrl").value.trim().replace(/\/$/,""), key=$("anonKey").value.trim();
-  if(!url||!key){setMsg("setupMsg","Enter both the Supabase URL and publishable/anon key.");return;}
-  if(!/^https:\/\/.+\.supabase\.co$/.test(url)){setMsg("setupMsg","Enter a valid https://PROJECT.supabase.co URL.");return;}
-  localStorage.setItem(STORAGE_URL,url);localStorage.setItem(STORAGE_KEY,key);
-  supabaseClient=window.supabase.createClient(url,key);
-  try{await loadCurriculum();setMsg("setupMsg","Connected. You can now register or log in.");show("auth");}
-  catch(e){setMsg("setupMsg",e.message);}
-}
+
 async function init(){
-  const url=localStorage.getItem(STORAGE_URL),key=localStorage.getItem(STORAGE_KEY);
-  if(!url||!key){show("setup");return;}
-  $("projectUrl").value=url;$("anonKey").value=key;
-  supabaseClient=window.supabase.createClient(url,key);
-  try{await loadCurriculum();const {data:{session}}=await supabaseClient.auth.getSession();if(session)await openDashboard(session.user);else show("auth");}
-  catch(e){show("setup");setMsg("setupMsg",e.message);}
+  show("auth");
+  try{
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    await loadCurriculum();
+    const {data:{session}} = await supabaseClient.auth.getSession();
+    if(session) await openDashboard(session.user);
+  }catch(e){
+    setMsg("authMsg", e.message);
+  }
 }
+
 async function register(){
   setMsg("authMsg","Creating account...");
   const {data,error}=await supabaseClient.auth.signUp({email:$("email").value.trim(),password:$("password").value});
@@ -73,50 +79,78 @@ async function register(){
   if(data.session){await openDashboard(data.user);}
   else setMsg("authMsg","Registration received. Check your email if confirmation is enabled, then log in.");
 }
+
 async function login(){
   setMsg("authMsg","Signing in...");
   const {data,error}=await supabaseClient.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
   if(error){setMsg("authMsg",error.message);return;}
   await openDashboard(data.user);
 }
+
 async function openDashboard(user){
-  $("userLabel").textContent=user.email||"Signed in";$("logoutBtn").classList.remove("hidden");
+  $("userLabel").textContent=user.email||"Signed in";
+  $("logoutBtn").classList.remove("hidden");
   show("dashboard");
   const {data,error}=await supabaseClient.from("nexus_progress").select("progress").eq("user_id",user.id).maybeSingle();
   if(error){setMsg("saveStatus","Database error: "+error.message+" — run supabase_schema.sql.");progress={};}
   else progress=data?.progress||{};
   render();
 }
+
 function topicKey(w,t){return `w${w}_t${t}`;}
+
 function render(){
-  const weeks=curriculum.weeks||[];let total=0,done=0,completedWeeks=0;
+  const weeks=curriculum.weeks||[];
+  let total=0,done=0,completedWeeks=0;
   $("weeks").innerHTML="";
-  weeks.forEach((week,wi)=>{
+  weeks.forEach(week=>{
     let weekDone=0;total+=week.topics.length;
     week.topics.forEach((_,ti)=>{if(progress[topicKey(week.week,ti)]){done++;weekDone++;}});
     if(week.topics.length&&weekDone===week.topics.length)completedWeeks++;
+
     const wrap=document.createElement("div");wrap.className="week";
     const head=document.createElement("div");head.className="weekhead";
     const pct=week.topics.length?Math.round(weekDone/week.topics.length*100):0;
     head.innerHTML=`<div class="row between"><strong>Week ${week.week}: ${escapeHtml(week.title)}</strong><span class="status">${weekDone}/${week.topics.length} · ${pct}%</span></div><div class="progressbar" style="margin-top:10px"><i style="width:${pct}%"></i></div>`;
+
     const body=document.createElement("div");body.className="weekbody";
+    if(collapsedWeeks.has(week.week))body.classList.add("hidden");
     const goal=document.createElement("p");goal.className="muted";goal.textContent=week.goal||"";body.appendChild(goal);
+
     week.topics.forEach((topic,ti)=>{
       const label=document.createElement("label");label.className="topic";
       const cb=document.createElement("input");cb.type="checkbox";cb.checked=!!progress[topicKey(week.week,ti)];
       cb.addEventListener("change",()=>{progress[topicKey(week.week,ti)]=cb.checked;saveProgress();render();});
-      const span=document.createElement("span");span.textContent=topic;label.append(cb,span);body.appendChild(label);
+      const span=document.createElement("span");span.textContent=topic;
+      label.append(cb,span);body.appendChild(label);
     });
-    if(week.resources?.length){const r=document.createElement("p");r.innerHTML="<strong>Resources: </strong>"+week.resources.map(x=>`<a href="${safeUrl(x.url)}" target="_blank" rel="noopener">${escapeHtml(x.label)}</a>`).join(" · ");body.appendChild(r);}
-    head.addEventListener("click",()=>body.classList.toggle("hidden"));
+
+    if(week.resources?.length){
+      const r=document.createElement("p");
+      r.innerHTML="<strong>Resources: </strong>"+week.resources.map(x=>`<a href="${safeUrl(x.url)}" target="_blank" rel="noopener">${escapeHtml(x.label)}</a>`).join(" · ");
+      body.appendChild(r);
+    }
+
+    head.addEventListener("click",()=>{
+      const hidden=body.classList.toggle("hidden");
+      if(hidden)collapsedWeeks.add(week.week);else collapsedWeeks.delete(week.week);
+    });
     wrap.append(head,body);$("weeks").appendChild(wrap);
   });
-  const pct=total?Math.round(done/total*100):0;$("doneCount").textContent=done;$("totalCount").textContent=total;$("weekCount").textContent=`${completedWeeks}/${weeks.length}`;$("overallPct").textContent=pct+"%";$("overallBar").style.width=pct+"%";
+
+  const pct=total?Math.round(done/total*100):0;
+  $("doneCount").textContent=done;
+  $("totalCount").textContent=total;
+  $("weekCount").textContent=`${completedWeeks}/${weeks.length}`;
+  $("overallPct").textContent=pct+"%";
+  $("overallBar").style.width=pct+"%";
 }
+
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function safeUrl(s){try{const u=new URL(s);return u.protocol==="https:"?u.href:"#";}catch{return "#";}}
+
 let saveTimer;
-async function saveProgress(){
+function saveProgress(){
   $("saveStatus").textContent="Saving...";
   clearTimeout(saveTimer);
   saveTimer=setTimeout(async()=>{
@@ -126,9 +160,16 @@ async function saveProgress(){
     $("saveStatus").textContent=error?"Save failed: "+error.message:"Progress saved to Supabase ✓";
   },350);
 }
-$("connectBtn").addEventListener("click",connect);
+
 $("registerBtn").addEventListener("click",register);
 $("loginBtn").addEventListener("click",login);
-$("logoutBtn").addEventListener("click",async()=>{await supabaseClient.auth.signOut();$("userLabel").textContent="";$("logoutBtn").classList.add("hidden");show("auth");});
+$("logoutBtn").addEventListener("click",async()=>{
+  await supabaseClient.auth.signOut();
+  progress={};collapsedWeeks.clear();
+  $("userLabel").textContent="";
+  $("logoutBtn").classList.add("hidden");
+  setMsg("authMsg","");
+  show("auth");
+});
 init();
 </script></body></html>
