@@ -1,5 +1,5 @@
 {
-  "format": "nexus-user-database",
+  "format": "-user-database",
   "version": 1,
   "updatedAt": null,
   "users": {}
