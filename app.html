@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Learnly · Learn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"></head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@latest"></script><script src="app.js"></script>
+<script>
+const u=guard('user');
+if(u){
+const bar=(l,a,b)=>`<div><div class="row between"><span>${l}</span><b>${a} / ${b}</b></div><div class="bar"><i style="width:${b?a/b*100:0}%"></i></div></div>`;
+shell(u,[['profile','My profile','user-round'],['lectures','Lectures','video'],['resources','Resources','file-text'],['assignments','Assignments','clipboard-list'],['learners','Learners','users']],{
+ profile:async v=>{const[r,pr,a,s]=await Promise.all([cnt('resources'),cnt('progress',{user_id:u.id}),cnt('assignments'),cnt('submissions',{user_id:u.id})]);
+  const t=r+a,d=pr+s;
+  v.innerHTML=head('My profile','Track your progress.')+`<div class="grid"><div class="card pad"><div class="row">${avatar(u,'lg')}<div><h2>${esc(u.name)}</h2><small>${esc(u.email)}</small><br><small>ID: ${esc(u.student_id)}</small></div></div></div>
+  <div class="card pad"><h3>Overall progress</h3><b style="font-size:28px">${t?Math.round(d/t*100):0}%</b>${bar('Completed items',d,t)}</div>
+  <div class="card pad"><h3>Breakdown</h3>${bar('Resources completed',pr,r)}${bar('Assignments submitted',s,a)}</div></div>`},
+ lectures:v=>crud(v,{title:'Lectures',sub:'Open a lecture in a new tab.',table:'lectures',cols:[['title','Title'],['description','Description'],['url','Watch','link'],['created_at','Added','date']]}),
+ resources:async v=>{const[r,p]=await Promise.all([db.from('resources').select('*').order('created_at',{ascending:false}),db.from('progress').select('resource_id').eq('user_id',u.id)]);
+  const done=new Set((p.data||[]).map(x=>x.resource_id));
+  v.innerHTML=head('Resources','Tick a resource when you have finished it.')+`<div class="card tbl">${r.data?.length?`<table><thead><tr><th>Done</th><th>Title</th><th>Description</th><th>Notes</th></tr></thead><tbody>${r.data.map(x=>`<tr><td><input type="checkbox" class="ck" data-id="${x.id}" ${done.has(x.id)?'checked':''} aria-label="Mark ${esc(x.title)} as completed"></td><td>${esc(x.title)}</td><td>${esc(x.description)}</td><td><a class="lnk" href="${esc(x.url)}" target="_blank" rel="noopener">Open ${ic('external-link')}</a></td></tr>`).join('')}</tbody></table>`:'<div class="empty">No resources yet.</div>'}</div>`;
+  v.onchange=async e=>{const c=e.target.closest('.ck');if(!c)return;const m={user_id:u.id,resource_id:c.dataset.id};
+   const{error}=await(c.checked?db.from('progress').upsert(m,{onConflict:'user_id,resource_id'}):db.from('progress').delete().match(m));
+   error?(c.checked=!c.checked,toast(error.message,1)):toast(c.checked?'Marked as completed':'Marked as not completed')}},
+ assignments:async v=>{const[a,s]=await Promise.all([db.from('assignments').select('*').order('created_at',{ascending:false}),db.from('submissions').select('*').eq('user_id',u.id)]);
+  const m=Object.fromEntries((s.data||[]).map(x=>[x.assignment_id,x]));
+  v.innerHTML=head('Assignments','Paste your Google Drive PDF or Word link to submit.')+`<div class="grid">${(a.data||[]).map(x=>{const t=m[x.id];return`<form class="card pad" data-id="${x.id}"><div class="row between"><h3>${esc(x.title)}</h3>${t?'<span class="badge">Submitted</span>':'<span class="badge warn">Pending</span>'}</div><p class="mut">${esc(x.description)}</p>${x.due_date?`<small>Due ${fmt(x.due_date)}</small>`:''}<input class="in" name="link" type="url" required placeholder="https://drive.google.com/…" value="${esc(t?.link)}" aria-label="Submission link"><button class="btn">${t?'Update submission':'Submit'}</button>${t?`<a class="lnk" href="${esc(t.link)}" target="_blank" rel="noopener">View submitted file ${ic('external-link')}</a>`:''}</form>`}).join('')||'<div class="card empty">No assignments yet.</div>'}</div>`;
+  v.onsubmit=async e=>{e.preventDefault();const f=e.target;const{error}=await db.from('submissions').upsert({assignment_id:f.dataset.id,user_id:u.id,link:f.link.value,submitted_at:new Date().toISOString()},{onConflict:'assignment_id,user_id'});
+   error?toast(error.message,1):(toast('Submitted'),pages_a(v))};const pages_a=x=>location.reload()},
+ learners:v=>crud(v,{title:'Learners',sub:'Everyone registered on the platform.',table:'users',select:'id,name,email,student_id,photo_url,role,created_at',cols:[['photo','','img'],['name','Name'],['student_id','Student ID'],['email','Email']]})
+})}
+</script></body></html>

@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Learnly · Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"></head>
+<body><div class="auth"><div class="card">
+<div class="brand" style="padding:0"><i data-lucide="graduation-cap"></i>Learnly</div>
+<div class="tabs" role="tablist"><button class="on" data-m="login">Sign in</button><button data-m="register">Create account</button></div>
+<form id="f"><div id="fields"></div><button class="btn" id="go">Sign in</button></form>
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@latest"></script><script src="app.js"></script>
+<script>
+const u0=me();if(u0)location.replace(home(u0));
+let mode='login';
+const L=[['email','Email','email',1],['password','Password','password',1]];
+const R=[['name','Full name','text',1],['email','Email','email',1],['student_id','Student ID (optional)','text'],['photo_url','Profile photo link (Google Drive)','url'],['password','Password (min 6 characters)','password',1]];
+const paint=()=>{$('#fields').innerHTML=(mode==='login'?L:R).map(f=>field(f)).join('');$('#go').textContent=mode==='login'?'Sign in':'Create account';
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.m===mode))};
+document.querySelector('.tabs').onclick=e=>{const b=e.target.closest('button');if(b){mode=b.dataset.m;paint()}};
+$('#f').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target));d.email=d.email.trim().toLowerCase();
+  try{let row;
+    if(mode==='login'){const{data,error}=await db.from('users').select('*').eq('email',d.email).maybeSingle();if(error)throw error;
+      if(!data||data.password_hash!==await sha(d.password))throw Error('Incorrect email or password.');row=data}
+    else{if(d.password.length<6)throw Error('Password must be at least 6 characters.');
+      const{data,error}=await db.from('users').insert({name:d.name,email:d.email,password_hash:await sha(d.password),photo_url:d.photo_url||null,student_id:d.student_id||'STU'+Math.floor(1e5+Math.random()*9e5),role:'user'}).select().single();
+      if(error)throw Error(error.code==='23505'?'This email or student ID is already registered.':error.message);row=data}
+    const{password_hash,...safe}=row;setMe(safe);location.href=home(safe)}catch(x){toast(x.message,1)}};
+paint();lucide.createIcons();
+</script></body></html>

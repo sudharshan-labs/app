@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Learnly · Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"></head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@latest"></script><script src="app.js"></script>
+<script>
+const u=guard('admin');
+if(u){
+const link=['url','Link (Google Drive or YouTube)','url',1],T=['title','Title','text',1],D=['description','Description','textarea'];
+shell(u,[['overview','Overview','layout-dashboard'],['learners','Learners','users'],['lectures','Lectures','video'],['resources','Resources','file-text'],['assignments','Assignments','clipboard-list'],['submissions','Submissions','inbox']],{
+ overview:async v=>{const s=[['Learners','users',await cnt('users',{role:'user'})],['Lectures','video',await cnt('lectures')],['Resources','file-text',await cnt('resources')],['Assignments','clipboard-list',await cnt('assignments')],['Submissions','inbox',await cnt('submissions')]];
+  v.innerHTML=head('Welcome back, '+esc(u.name.split(' ')[0]),'Here is what is happening in your classroom.')+`<div class="grid">${s.map(([l,i,n])=>`<div class="card stat"><span>${ic(i)}${l}</span><b>${n}</b></div>`).join('')}</div>`},
+ learners:v=>crud(v,{title:'Learners',sub:'Add, edit and remove learner accounts.',table:'users',rw:1,
+  cols:[['photo','','img'],['name','Name'],['student_id','Student ID'],['email','Email'],['role','Role','badge']],
+  fields:[['name','Name','text',1],['email','Email','email',1],['student_id','Student ID','text'],['photo_url','Profile photo link (Google Drive)','url'],['role','Role','select',1,['user','admin']],['password','Password (leave blank to keep current)','password']],
+  pre:async(d,isNew)=>{if(d.password){d.password_hash=await sha(d.password)}else if(isNew)throw Error('Password is required.');delete d.password;d.email=d.email.toLowerCase()}}),
+ lectures:v=>crud(v,{title:'Lectures',sub:'Share Google Drive or YouTube video links.',table:'lectures',rw:1,cols:[['title','Title'],['description','Description'],['url','Video','link'],['created_at','Added','date']],fields:[T,D,link]}),
+ resources:v=>crud(v,{title:'Resources',sub:'Share Google Drive PDF notes.',table:'resources',rw:1,cols:[['title','Title'],['description','Description'],['url','Notes','link'],['created_at','Added','date']],fields:[T,D,link]}),
+ assignments:v=>crud(v,{title:'Assignments',sub:'Create tasks for learners.',table:'assignments',rw:1,cols:[['title','Title'],['description','Description'],['due_date','Due','date'],['created_at','Created','date']],fields:[T,D,['due_date','Due date','date']]}),
+ submissions:v=>crud(v,{title:'Submissions',sub:'Work submitted by learners.',table:'submissions',select:'*,users(name,student_id),assignments(title)',
+  cols:[['n','Learner','',r=>r.users?.name],['s','Student ID','',r=>r.users?.student_id],['a','Assignment','',r=>r.assignments?.title],['link','File','link'],['submitted_at','Submitted','date']]})
+})}
+</script></body></html>
